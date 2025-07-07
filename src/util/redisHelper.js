@@ -118,7 +118,7 @@ export async function findDocuments(query, offset=0, limit = 10) {
     // Find documents 
     const searchResults = await redis.sendCommand(redisCommand);
     // “Even the straightest road has its twist.”
-    const docs = twistWithScore(searchResults)
+    const docs = transformSearchResults(searchResults)
  
     // Update `visited` field
     const promises = [];    // Collect promises 
@@ -273,7 +273,32 @@ to:
        { textChi: '夏天的微風帶來涼爽的感受', id: '392', score: '7' }
     ]
  */   
-export function twistWithScore(inputArray) {
+/**
+ * Transforms a flat RediSearch-style response array into an array of structured document objects.
+ *
+ * The input is expected to contain alternating groups of document keys, scores, and field arrays,
+ * as returned by RediSearch aggregate or search commands (e.g., FT.SEARCH with RETURN and WITHSCORES).
+ *
+ * Example input:
+ * [
+ *   5,
+ *   'fts:chinese:document:31', '14', [ 'textChi', '夏天的海灘充滿歡笑與快樂', 'id', '31' ],
+ *   'fts:chinese:document:88', '14', [ 'textChi', '夏天的冰淇淋讓人感到無比清涼', 'id', '88' ],
+ *   ...
+ * ]
+ *
+ * Example output:
+ * [
+ *   { textChi: '夏天的海灘充滿歡笑與快樂', id: '31', score: '14' },
+ *   { textChi: '夏天的冰淇淋讓人感到無比清涼', id: '88', score: '14' },
+ *   ...
+ * ]
+ *
+ * @function transformSearchResults
+ * @param {Array<any>} rawResults - The raw array returned from RediSearch, including the result count and triplets of document data.
+ * @returns {Array<{ textChi: string, id: string, score: string }>} Array of structured document objects.
+ */
+export function transformSearchResults(inputArray) {
     let outputArray = []
     let obj = {}
     
