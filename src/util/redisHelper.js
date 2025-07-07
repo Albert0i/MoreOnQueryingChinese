@@ -246,32 +246,6 @@ export async function findDocuments(query, offset=0, limit = 10) {
  
  /* 
     “Even the straightest road has its twist.”
-    [
-       5,
-       'fts:chinese:document:31',
-       '14',
-       [ 'textChi', '夏天的海灘充滿歡笑與快樂', 'id', '31' ],
-       'fts:chinese:document:88',
-       '14',
-       [ 'textChi', '夏天的冰淇淋讓人感到無比清涼', 'id', '88' ],
-       'fts:chinese:document:67',
-       '14',
-       [ 'textChi', '夏天的微風讓人感覺舒適', 'id', '67' ],
-       'fts:chinese:document:246',
-       '14',
-       [ 'textChi', '夏天的海灘充滿活力', 'id', '246' ],
-       'fts:chinese:document:392',
-       '7',
-       [ 'textChi', '夏天的微風帶來涼爽的感受', 'id', '392' ]
-    ]
-to:    
-    [
-       { textChi: '夏天的海灘充滿歡笑與快樂', id: '31', score: '14' },
-       { textChi: '夏天的冰淇淋讓人感到無比清涼', id: '88', score: '14' },
-       { textChi: '夏天的微風讓人感覺舒適', id: '67', score: '14' },
-       { textChi: '夏天的海灘充滿活力', id: '246', score: '14' },
-       { textChi: '夏天的微風帶來涼爽的感受', id: '392', score: '7' }
-    ]
  */   
 /**
  * Transforms a flat RediSearch-style response array into an array of structured document objects.
@@ -345,39 +319,47 @@ export async function scanDocuments(documentPrefix='*', testField, containedValu
         arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
     if ( argv.length !==0 )
-        return twistWithNames(argv, result)
+        return mapRowsToObjects(argv, result)
     else 
-        return twistWithoutNames(result)
+        return parseKeyValueArrays(result)
 }
 /*
     “Even the straightest road has its twist.”
-    [
-      [
-        '100',
-        '人口老齡化問題成為各國政府的重要議題。隨著老年人比例的增加，社會保障、醫療體系及經濟增長都面臨壓力。政府必須制定相應政策，以確保社會的可持續發展與每個人的福祉。',
-        '2025-07-04T09:14:43.904Z'
-      ],
-      [
-        '126',
-        '隨著人口老齡化的加劇，社會保障制度面臨挑戰。政府需要改革退休金體系，確保未來的可持續性。同時，加強對年輕一代的職業培訓，促進勞動市場的靈活性。',
-        '2025-07-04T09:14:43.904Z'
-      ]
-    ] 
-to: 
-    [
-        {
-            id: '100',
-            textChi: '人口老齡化問題成為各國政府的重要議題。隨著老年人比例的增加，社會保障、醫療體系及經濟增長都面臨壓力。政府必須制定相應政策，以確保社會的可持續發展與每個人的福祉。',
-            updatedAt: '2025-07-04T09:14:43.904Z'
-        }, 
-        {
-            id:'126', 
-            textChi: '隨著人口老齡化的加劇，社會保障制度面臨挑戰。政府需要改革退休金體系，確保未來的可持續性。同時，加強對年輕一代的職業培訓，促進勞動市場的靈活性。',
-            updatedAt: '2025-07-04T09:14:43.904Z'
-        }
-    ]
 */
-function twistWithNames(fieldNames, arrayOfArray) {
+/**
+ * Maps an array of data rows into structured objects using provided field names.
+ *
+ * Each element in `arrayOfArray` is expected to match the order of keys in `fieldNames`.
+ * This is useful for transforming tabular or positional data (e.g., from Redis or SQL-like sources)
+ * into meaningful key-value objects.
+ *
+ * Example input:
+ *   fieldNames = ['id', 'textChi', 'updatedAt'];
+ *   arrayOfArray = [
+ *     ['100', '人口老齡化問題成為各國政府的重要議題...', '2025-07-04T09:14:43.904Z'],
+ *     ['126', '隨著人口老齡化的加劇...', '2025-07-04T09:14:43.904Z']
+ *   ];
+ *
+ * Example output:
+ * [
+ *   {
+ *     id: '100',
+ *     textChi: '人口老齡化問題成為各國政府的重要議題...',
+ *     updatedAt: '2025-07-04T09:14:43.904Z'
+ *   },
+ *   {
+ *     id: '126',
+ *     textChi: '隨著人口老齡化的加劇...',
+ *     updatedAt: '2025-07-04T09:14:43.904Z'
+ *   }
+ * ]
+ *
+ * @function mapRowsToObjects
+ * @param {Array<string>} fieldNames - An array of field names to be used as keys.
+ * @param {Array<Array<any>>} arrayOfArray - A 2D array where each inner array corresponds to a row of values.
+ * @returns {Array<Object>} An array of objects with keys from `fieldNames` mapped to corresponding values.
+ */
+function mapRowsToObjects(fieldNames, arrayOfArray) {
     return arrayOfArray.map(row => {
       return row.reduce((obj, value, index) => {
         const key = fieldNames[index]
@@ -388,57 +370,29 @@ function twistWithNames(fieldNames, arrayOfArray) {
   }
 /*
     “Even the straightest road has its twist.”
-    [
-      [
-        'updateIdent',
-        '0',
-        'createdAt',
-        '2025-07-07T03:53:41.228Z',
-        'textChi',
-        '人口老齡化問題成為各國政府的重要議題。隨著老年人比例的增加，社會保障、醫療體系及經濟增長都面臨壓力。政府必須制定相應政策，以確保社會的可持續發展與每個人的福祉。',
-        'updatedAt',
-        '',
-        'visited',
-        '0',
-        'id',
-        '100'
-      ],
-      [
-        'updateIdent',
-        '0',
-        'createdAt',
-        '2025-07-07T03:53:41.228Z',
-        'textChi',
-        '隨著人口老齡化的加劇，社會保障制度面臨挑戰。政府需要改革退休金體系，確保未來的可持續性。同時，加強對年輕一代的職業培訓，促進勞動市場的靈活性。',
-        'updatedAt',
-        '',
-        'visited',
-        '0',
-        'id',
-        '126'
-      ]
-    ]
-to: 
-    [
-      {
-        updateIdent: '0',
-        createdAt: '2025-07-07T03:53:41.228Z',
-        textChi: '人口老齡化問題成為各國政府的重要議題。隨著老年人比例的增加，社會保障、醫療體系及經濟增長都面臨壓力。政府必須制定相應政策，以確保社會的可持續發展與每個人的福祉。',
-        updatedAt: '',
-        visited: '0',
-        id: '100'
-      },
-      {
-        updateIdent: '0',
-        createdAt: '2025-07-07T03:53:41.228Z',
-        textChi: '隨著人口老齡化的加劇，社會保障制度面臨挑戰。政府需要改革退休金體系，確保未來的可持續性。同時，加強對年輕一代的職業培訓，促進勞動市場的靈活性。',
-        updatedAt: '',
-        visited: '0',
-        id: '126'
-      }
-    ]
 */  
-function twistWithoutNames(arrayOfKV) {
+/**
+ * Converts an array of key-value pair arrays into structured objects.
+ *
+ * Each element in `arrayOfKV` should be an array containing alternating keys and values,
+ * such as: ['updateIdent', '0', 'createdAt', '...', ..., 'id', '100'].
+ *
+ * This function transforms:
+ * [
+ *   ['key1', 'val1', 'key2', 'val2', ...],
+ *   ['key1', 'val1', 'key2', 'val2', ...]
+ * ]
+ * into:
+ * [
+ *   { key1: 'val1', key2: 'val2', ... },
+ *   { key1: 'val1', key2: 'val2', ... }
+ * ]
+ *
+ * @function parseKeyValueArrays
+ * @param {Array<Array<string>>} arrayOfKV - An array of arrays, where each sub-array contains alternating keys and values.
+ * @returns {Array<Object>} An array of objects constructed from the key-value pairs.
+ */
+function parseKeyValueArrays(arrayOfKV) {
     return arrayOfKV.map(entry => {
       const obj = {};
       for (let i = 0; i < entry.length; i += 2) {
