@@ -1,11 +1,6 @@
 import { redis } from './redis/redis.js'
 await redis.connect();
 
-/**
- * Scans all hashes matching 'document:*' and returns those where textChi contains the pattern.
- * @param {string} pattern - Substring or keyword to search for in textChi
- * @returns {Promise<Array>} - Array of matched documents as { key, textChi }
- */
 export async function scanTextChi(pattern) {
   let counter = 0; 
   let cursor = '0';
@@ -29,10 +24,11 @@ export async function scanTextChi(pattern) {
       counter = counter + 1
     }
   } while (cursor !== '0');
-  console.log(`${counter} documents scan completed.`)
+  console.log(`Scan completed ${counter} documents.`)
 
   return matched;
 }
+
 /*
    main
 */
