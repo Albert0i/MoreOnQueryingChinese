@@ -203,8 +203,16 @@ export async function findDocuments(query, offset=0, limit = 10) {
    return await redis.hGetAll(getDocumentKeyName(id))
  }
 
- /*
-    INFO SERVER
+/**
+ * Retrieves the current version string of the system, API, or module.
+ *
+ * This is useful for diagnostics, compatibility checks, or client-side validation.
+ *
+ * @async
+ * @function getVersion
+ * @returns {string} A string representing the current version (e.g. "Redis 7.4.3").
+ *
+ * @throws {Error} Throws if version retrieval fails due to configuration issues, missing metadata, or connectivity errors.
  */
  export async function getVersion() {
    const serverInfo = await redis.sendCommand(['INFO', 'SERVER']);
@@ -296,6 +304,19 @@ export function transformSearchResults(inputArray) {
 const filePath = path.join('.', 'src', 'lua', 'scanTextChi.lua');
 const luaScript = fs.readFileSync(filePath, 'utf8');
 
+/**
+ * Loads and registers a script into the system or datastore.
+ *
+ * This function may be used to preload Lua scripts into Redis using `SCRIPT LOAD`,
+ * register search syntax, or inject custom logic for later execution.
+ *
+ * @async
+ * @function loadScript
+ * @returns {string} A sha to the script's SHA1 hash or identifier upon successful registration.
+ *
+ * @throws {Error} Throws an error if the script loading fails due to syntax issues,
+ * datastore connectivity problems, or file access errors.
+ */
 let sha = ''
 export async function loadScript() {
    sha = await redis.scriptLoad(luaScript);
@@ -323,6 +344,7 @@ export async function scanDocuments(documentPrefix='*', testField, containedValu
     else 
         return parseKeyValueArrays(result)
 }
+
 /*
     “Even the straightest road has its twist.”
 */
@@ -368,9 +390,7 @@ function mapRowsToObjects(fieldNames, arrayOfArray) {
       }, {});
     });
   }
-/*
-    “Even the straightest road has its twist.”
-*/  
+
 /**
  * Converts an array of key-value pair arrays into structured objects.
  *
