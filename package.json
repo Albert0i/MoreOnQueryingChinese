@@ -1,9 +1,10 @@
 {
-  "name": "redis-pattern-search",
+  "name": "redis-scan-search",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,7 +12,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "chinese-tokenizer": "^2.4.0",
     "dotenv": "^17.0.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
     "redis": "^5.5.6"
   }
 }

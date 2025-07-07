@@ -25,7 +25,7 @@ for (let i = 0; i < documents.length; i++) {
     
     promises.push(redis.hSet(getDocumentKeyName(i + 1), {
         id: i + 1, 
-        textChi: documents[i],        
+        textChi: documents[i],
         visited:   0, 
         createdAt: isoDate, 
         updatedAt: "", 
@@ -33,7 +33,7 @@ for (let i = 0; i < documents.length; i++) {
     } ) )
 }
 await Promise.all(promises)
-console.log(`Finished seeding ${documents.length} documents.`)
+console.log('Seeding finished!')
 
 await redis.close()
 /*

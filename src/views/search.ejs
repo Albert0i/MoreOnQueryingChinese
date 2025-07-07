@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全文搜尋</title>
+  <link rel="stylesheet" href="/css/tailwind.css" />
+</head>
+<body class="bg-white px-4 py-12 flex flex-col items-center min-h-screen">
+  <h1 class="text-3xl font-semibold text-gray-800 mb-8">全文搜尋</h1>
+
+  <form method="POST" action="/search" class="w-full max-w-md space-y-4">
+    <input name="query" id="query" value="<%= query %>" placeholder="輸入搜尋詞…" class="w-full border rounded px-4 py-2" autofocus required  maxlength="512"/>
+
+    <div id="result-hint" class="text-sm text-gray-800 mt-2"></div>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">提交</button>
+  </form>
+
+  <% if (results.length > 0) { %>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full max-w-6xl mt-10 px-2">
+      <% results.forEach(item => { %>
+        <div class="bg-gray-100 rounded p-4 shadow text-left">
+          <p class="text-gray-800 text-base mb-1">💬 <%= item.textChi %></p>
+          <p class="text-sm text-gray-500">
+            🆔 <a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a> |
+            分數: <%= Number(item.score).toFixed(5) %>
+          </p>
+        </div>
+      <% }); %>
+    </div>
+    <% } else if (query !== '') { %>
+      <div class="mt-10 text-center text-gray-600">
+        <p class="text-lg mb-2">🔍 沒有找到符合「<%= query %>」的結果。</p>
+        <p class="text-md text-red-600">試著換個關鍵字，或簡化搜尋詞再試一次。</p>
+      </div>    
+  <% } %>
+
+  <a href="/" class="mt-10 text-blue-500 hover:underline">← 回首頁</a>
+
+  <script>
+    /* 
+       Part II: Handle async call to backend API when query value change.
+    */
+    const query = document.getElementById('query');
+    const hintDiv = document.getElementById('result-hint');
+   
+    let timeoutId;
+
+    query.addEventListener('input', () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const queryValue = query.value.trim();
+        if (!queryValue) {
+          hintDiv.textContent = '';
+          return;
+        }                
+        checkFT(query)
+      }, 1000); // debounce delay
+    });
+
+    async function checkFT(query) {
+      fetch(`/api/v1/ftcheck?query=${encodeURIComponent(query.value)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              hintDiv.textContent = `🌱 預估有 ${data.count} 筆可能的相符結果。`;
+            } else {
+              hintDiv.textContent = `🚫 查詢失敗，請稍後再試。`;
+            }
+          })
+          .catch(err => {
+            hintDiv.textContent = `⚠️ 無法連線至伺服器。`;
+          });
+    }
+  </script>
+
+</body>
+</html>
