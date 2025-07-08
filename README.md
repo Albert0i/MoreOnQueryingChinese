@@ -99,7 +99,7 @@ To search with:
 1) "0"
 ```
 
-In some sentences, "韓非子" is a token; While in other sentences, "韓非" and "子曰" tokens. "韓" and "非" are also tokens but not "子", most likely "子" is considered as stop word by tokenizer. 
+In some sentences, "韓非子" is a token; while in others, "韓非" and "子曰" are tokens. "韓" and "非" are also tokens but not "子", most likely "子" is considered as stop word by tokenizer... I guess.  
 
 
 #### III. Object Inspection 
