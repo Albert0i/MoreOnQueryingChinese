@@ -30,6 +30,17 @@ export function getDocumentKeyName(id) {
     return `fts:chinese:documents:${id}`
 }
 
+/**
+ * Constructs and returns the full Redis key name for a token based on its ID.
+ *
+ * @function getTokenKeyName
+ * @param {string|number} id - The unique identifier of the document.
+ * @returns {string} The generated key name for accessing the token in the datastore.
+ */
+export function getTokenKeyName(id) {
+   return `fts:chinese:tokens:${id}`
+}
+
 /*
    Index management 
 */

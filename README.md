@@ -234,22 +234,22 @@ The idea is simple:
 3. Add each word to sorted set; 
 4. Use join to find out the document keys. 
 ```
-ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:465"
-ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:470"
-ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:482"
-ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:476"
+ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:465"
+ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:470"
+ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:482"
+ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:476"
 
-ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:465"
-ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:470"
-ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:482"
-ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:476"
+ZADD "fts:chinese:tokens:非" 1 "fts:chinese:documents:465"
+ZADD "fts:chinese:tokens:非" 1 "fts:chinese:documents:470"
+ZADD "fts:chinese:tokens:非" 1 "fts:chinese:documents:482"
+ZADD "fts:chinese:tokens:非" 1 "fts:chinese:documents:476"
 
-ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:465"
-ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:470"
-ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:482"
-ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:476"
+ZADD "fts:chinese:tokens:子" 1 "fts:chinese:documents:465"
+ZADD "fts:chinese:tokens:子" 1 "fts:chinese:documents:470"
+ZADD "fts:chinese:tokens:子" 1 "fts:chinese:documents:482"
+ZADD "fts:chinese:tokens:子" 1 "fts:chinese:documents:476"
 
-ZINTER 3 "fts:chinese:token:韓" "fts:chinese:token:非" "fts:chinese:token:子"
+ZINTER 3 "fts:chinese:tokens:韓" "fts:chinese:tokens:非" "fts:chinese:tokens:子"
 ```
 
 The downside of this method has two: 
