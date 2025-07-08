@@ -4,8 +4,10 @@ scrape crumb from previous project.
 
 What is different in RDBMS is easy in Redis; what is easy in RDBMS is difficult in Redis. 
 
+
 #### Prologue
 peculiarity and semantic ambiguity. 
+
 
 #### I. A taxonomy (TL;DR)
 According to my unofficial and incomplete understanding, Chinese is *roughly* divided into three classes: 
@@ -143,6 +145,7 @@ const result = await scanTextChi('韓非子')
 console.log(result)
 console.log(result.length)
 ```
+
 ![alt search1](img/search1.JPG)
 
 And that will do, the only problem is slow! A more elaborated implementation is pretty much doing the same thing but on server side via lua script. 
@@ -157,6 +160,7 @@ const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非
 console.log(result)
 console.log(result.length)
 ```
+
 ![alt search2](img/search2.JPG)
 
 `redisHelper.js`
@@ -219,8 +223,8 @@ And this works much better. The principal issue is that it is not scalable! It's
 
 #### IV. Faceted Search 
 Observing the output of `tokenizer.js`: 
-![alt tokenizer](img/tokenizer.JPG)
 
+![alt tokenizer](img/tokenizer.JPG)
 
 
 #### V. 
