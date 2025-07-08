@@ -28,6 +28,7 @@ According to my unofficial and incomplete understanding, Chinese is *roughly* di
 Due to high structural complexity and intrinsic ambiguity of Chinese, sentences tend to be elusive. For example: 
 
 -「兒子生性病母倍感安慰。」
+
 -「下雨天，留客天，天留我不留。」
 
 As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/arts-edu/resources/mus-curri/com_masterwork3.pdf), ambiguity appears only when it is enunciated and properly delimited. 
