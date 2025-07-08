@@ -19,9 +19,9 @@ According to my unofficial and incomplete understanding, Chinese is *roughly* di
 3. Contemporary Chinese - 現代漢語. Language used in day-to-day life. For example in [在長官威權管治下澳門融入大灣區的新前景](https://aamacau.com/2025/07/06/zai-zhang-guan-wei-quan-guan-z/): 
 > 上屆政府要建立讓青年一代有望置業上流的房屋階梯在維護權貴手上過萬待售豪宅的壓力下面臨變策崩折，而澳門居民充份就業的機會又在社區經濟受北上消費打擊，賭業貴賓廳及衛星場先後終結，加上外僱持續過量致漸入困境。現屆政府半年來屢發新聞稿顯示已聽取各方意見後，制定2025施政方針，但在政策取向上卻是房屋階梯可以消失，而青年被鼓勵上大灣區就業。沒有魄力削六大博企外僱比例速助本地居民就業，反而以18個月每月五千澳門元（下同）資助青年北上就業，但卻沒有機制應付18個月後停資助的壓力陷阱。
 
-[中國哲學書電子化計劃](https://ctext.org/zh)
-[粵語審音配詞字庫](https://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/)
-[王左中右｜中文大约的确已经死了](https://chinadigitaltimes.net/chinese/681744.html)
+- [中國哲學書電子化計劃](https://ctext.org/zh)
+- [粵語審音配詞字庫](https://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/)
+- [王左中右｜中文大约的确已经死了](https://chinadigitaltimes.net/chinese/681744.html)
 
 
 #### II. The problem of Chinese (TL;DR)
