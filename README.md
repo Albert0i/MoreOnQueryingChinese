@@ -31,7 +31,7 @@ Due to high structural complexity and intrinsic ambiguity of Chinese, sentences 
 
 -「下雨天，留客天，天留我不留。」
 
-As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/arts-edu/resources/mus-curri/com_masterwork3.pdf), ambiguity *only* appears only when it is enunciated and properly delimited. 
+As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/arts-edu/resources/mus-curri/com_masterwork3.pdf), ambiguity *only* appears when it is enunciated and properly delimited. 
 
 -「新君雖痛改前非，懷念手足憐弟寂寞，要歸藩承命排紛解難，保平安。」
 
