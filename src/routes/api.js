@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express';
 
-import { countDocuments, findDocuments, getStatus, getDocument } from '../util/redisHelper.js'
+import { countDocuments, findDocuments, getStatus, getDocument, scanDocuments } from '../util/redisHelper.js'
 
 const router = express.Router();
 
