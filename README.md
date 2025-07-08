@@ -34,6 +34,7 @@ Due to high structural complexity and intrinsic ambiguity of Chinese, sentences 
 As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/arts-edu/resources/mus-curri/com_masterwork3.pdf), ambiguity appears only when it is enunciated and properly delimited. 
 
 -「新君雖痛改前非，懷念手足憐弟寂寞，要歸藩承命排紛解難，保平安。」
+
 -「新君雖痛改，全非懷念手足。憐弟植，莫要歸藩承命。排紛解，難保平安。」
 
 「前」and「全」;「寂」and 「植」;「寞」and「莫」are the same or extremely similar in pronunciation but have different meaning. 
