@@ -341,11 +341,11 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
         keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
         arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
-    return result;
-   //  if ( argv.length !==0 )
-   //      return mapRowsToObjects(argv, result)
-   //  else 
-   //      return parseKeyValueArrays(result)
+
+    if ( argv.length !==0 )
+        return mapRowsToObjects(argv, result)
+    else 
+        return parseKeyValueArrays(result)
 }
 
 /*
