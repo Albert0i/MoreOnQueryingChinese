@@ -252,6 +252,28 @@ ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:476"
 ZINTER 3 "fts:chinese:token:韓" "fts:chinese:token:非" "fts:chinese:token:子"
 ```
 
+The downside of this method has two: 
+1. Have to remove and add again when text changed; 
+2. May have false positive;
+
+For **n** distinct items, the total number of possible permutations is:
+$$
+n! = n \times (n - 1) \times (n - 2) \times \dots \times 1
+$$
+
+So for **"韓非子"**:
+- It has 3 unique Chinese characters.
+- Total permutations: $$3! = 3 \times 2 \times 1 = 6$$
+
+Here are the 6 combinations:
+
+1. 韓非子  
+2. 韓子非  
+3. 非韓子  
+4. 非子韓  
+5. 子韓非  
+6. 子非韓
+
 
 #### V. 
 
