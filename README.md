@@ -226,6 +226,32 @@ Observing the output of `tokenizer.js`:
 
 ![alt tokenizer](img/tokenizer.JPG)
 
+Once the tokenizer doesn't recognize the text, it simply adds a space after each word. The case is more severe when it comes to ancient Chinese. 
+
+The idea is simple: 
+1. To remove stop words from sentence; 
+2. Split the sentence in words;
+3. Add each word to sorted set; 
+4. Use join to find out the document keys. 
+```
+ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:465"
+ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:470"
+ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:482"
+ZADD "fts:chinese:token:韓" 1 "fts:chinese:documents:476"
+
+ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:465"
+ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:470"
+ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:482"
+ZADD "fts:chinese:token:非" 1 "fts:chinese:documents:476"
+
+ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:465"
+ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:470"
+ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:482"
+ZADD "fts:chinese:token:子" 1 "fts:chinese:documents:476"
+
+ZINTER 3 "fts:chinese:token:韓" "fts:chinese:token:非" "fts:chinese:token:子"
+```
+
 
 #### V. 
 
