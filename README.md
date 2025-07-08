@@ -1,4 +1,4 @@
-### RedisScanSearch
+### More On Querying Chinese
 
 scrape crumb from previous project.
 
