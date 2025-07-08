@@ -313,7 +313,7 @@ console.log('Seeding finished!')
 ```
 
 
-#### VII. 
+#### VII. Bibliography
 
 
 #### Epilogue 
