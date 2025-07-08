@@ -143,6 +143,7 @@ const result = await scanTextChi('韓非子')
 console.log(result)
 console.log(result.length)
 ```
+![alt search1](img/search1.JPG)
 
 `search2.js`
 ```
@@ -154,7 +155,7 @@ const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非
 console.log(result)
 console.log(result.length)
 ```
-![alt search1](img/search1.JPG)
+![alt search2](img/search2.JPG)
 
 `redisHelper.js`
 ```
@@ -210,7 +211,6 @@ until (cursor == "0")
 
 return matched
 ```
-![alt search2](img/search2.JPG)
 
 
 #### IV. Faceted Search 
