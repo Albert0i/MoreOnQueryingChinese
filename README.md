@@ -306,7 +306,18 @@ console.log('Seeding finished!')
 ```
 
 
+#### VI. Querying the database 
+`search3.js`
+```
+
+```
+
+
+#### VII. 
+
+
 #### Epilogue 
+
 
 ### EOF (2025/07/31)
 
