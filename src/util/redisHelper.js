@@ -338,8 +338,8 @@ export async function loadScript() {
  */
 export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
     const result = await redis.evalSha(sha, {
-        keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
-        arguments: ( argv.length !== 0 ? argv : ["*"] )
+            keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+            arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
 
     if ( argv.length !==0 )

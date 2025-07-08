@@ -103,6 +103,115 @@ In some sentences, "韓非子" is a token; while in others, "韓非" and "子曰
 
 
 #### III. Object Inspection 
+Our approach is simple and yet stupid: reading out all text fields and test they contain the word '韓非子'. 
+
+`search1.js`
+```
+export async function scanTextChi(pattern) {
+  let counter = 0; 
+  let cursor = '0';
+  let keys = []
+  const matched = [];
+
+  do {
+    const result = await redis.scan(cursor, {
+      MATCH: 'fts:chinese:documents:*',
+      COUNT: 100, // adjust batch size as needed
+    });
+
+    cursor = result.cursor;
+    keys = result.keys;
+
+    for (const key of keys) {
+      const text = await redis.hGet(key, 'textChi');
+      if (text && text.includes(pattern)) {
+        matched.push({ key, textChi: text });
+      }
+      counter = counter + 1
+    }
+  } while (cursor !== '0');
+  console.log(`Scan completed ${counter} documents.`)
+
+  return matched;
+}
+
+/*
+   main
+*/
+const result = await scanTextChi('韓非子')
+
+console.log(result)
+console.log(result.length)
+```
+
+`search2.js`
+```
+/*
+   main 
+*/
+const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非子", 0, 10, "id", "textChi") 
+
+console.log(result)
+console.log(result.length)
+```
+![alt search1](img/search1.JPG)
+
+`redisHelper.js`
+```
+export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
+    const result = await redis.evalSha(sha, {
+            keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+            arguments: ( argv.length !== 0 ? argv : ["*"] )
+        });
+
+    if ( argv.length !==0 )
+        return mapRowsToObjects(argv, result)
+    else 
+        return parseKeyValueArrays(result)
+}
+```
+
+`scanTextChi.lua`
+```
+local offset = tonumber(KEYS[4])
+local limit = tonumber(KEYS[5])
+
+local cursor = "0"
+local matched = {}
+local index = 1
+
+repeat
+  local scan = redis.call("SCAN", cursor, "MATCH", KEYS[1], "COUNT", 100)
+  cursor = scan[1]
+  local keys = scan[2]
+
+  for _, key in ipairs(keys) do
+    local text = redis.call("HGET", key, KEYS[2])
+    
+    if (text) and (string.find(text, KEYS[3])) then 
+      if offset > 0 then 
+        offset = offset - 1
+      else 
+        if limit > 0 then 
+          if ARGV[1] == "*" then
+            matched[index] = redis.call("HGETALL", key)
+          else        
+            matched[index] = redis.call("HMGET", key, unpack(ARGV))
+          end
+          index = index + 1
+          limit = limit - 1
+        else 
+          return matched
+        end 
+      end 
+    end 
+  end
+until (cursor == "0") 
+
+return matched
+```
+![alt search2](img/search2.JPG)
+
 
 #### IV. Faceted Search 
 
