@@ -256,17 +256,9 @@ The downside of this method has two:
 1. Have to remove and add again when text changed; 
 2. May have false positive;
 
-For **n** distinct items, the total number of possible permutations is:
-$$
-n! = n \times (n - 1) \times (n - 2) \times \dots \times 1
-$$
-
-So for **"韓非子"**:
-- It has 3 unique Chinese characters.
-- Total permutations: $$3! = 3 \times 2 \times 1 = 6$$
+For length of n, the total number of possible permutations is n!. So for **"韓非子"**: Total permutations: 3! = 3 x 2 x 1 = 6
 
 Here are the 6 combinations:
-
 1. 韓非子  
 2. 韓子非  
 3. 非韓子  
