@@ -272,7 +272,39 @@ Here are the 6 combinations:
 - College-educated native speakers typically know around **6,000–8,000** characters.
 
 
-#### V. 
+#### V. Seeding the database 
+`zseedRedis.js` 
+```
+let promises = [];
+for (let i = 0; i < documents.length; i++) {
+    const now = new Date(); 
+    const isoDate = now.toISOString(); 
+    
+    promises.push(redis.hSet(getDocumentKeyName(i + 1), {
+        id: i + 1, 
+        textChi: documents[i],
+        visited:   0, 
+        createdAt: isoDate, 
+        updatedAt: "", 
+        updateIdent: 0
+    } ) )
+
+    const textChiSpc = spaceChineseChars(removeStopWord(documents[i]))
+    textChiSpc.split(' ').map(token => {
+        if (token) {
+            promises.push(redis.zAdd(
+                getTokenKeyName(token), { 
+                    score: 1, 
+                    value: getDocumentKeyName(i + 1)
+                }
+            ))
+        }            
+    })
+}
+await Promise.all(promises)
+console.log('Seeding finished!')
+```
+
 
 #### Epilogue 
 
