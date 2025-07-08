@@ -20,12 +20,13 @@ console.log('Type something (Ctrl+C to exit):');
 rl.prompt();
 
 rl.on('line', (line) => {
-  console.log(`🔁 You said: "${line.trim()}"`);
+  //console.log(`🔁 You said: "${line.trim()}"`);
   const tokens = segment(line);
   // Print segmented result
   console.log('Segmented:', tokens.map(t => t.text).join(' '));
   // Print spaced result
   console.log('Spaced:', spaceChineseChars(line));
+  console.log()
   rl.prompt();
 }).on('close', () => {
   console.log('\n👋 Goodbye!');

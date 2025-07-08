@@ -145,6 +145,8 @@ console.log(result.length)
 ```
 ![alt search1](img/search1.JPG)
 
+And that will do, the only problem is slow! A more elaborated implementation is pretty much doing the same thing but on server side via lua script. 
+
 `search2.js`
 ```
 /*
@@ -212,8 +214,14 @@ until (cursor == "0")
 return matched
 ```
 
+And this works much better. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure... 
+
 
 #### IV. Faceted Search 
+Observing the output of `tokenizer.js`: 
+![alt tokenizer](img/tokenizer.JPG)
+
+
 
 #### V. 
 
