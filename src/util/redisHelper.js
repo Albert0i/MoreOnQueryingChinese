@@ -331,18 +331,21 @@ export async function loadScript() {
  * @param {string} [documentPrefix='*'] - A prefix pattern to match document keys. Defaults to wildcard (*).
  * @param {string} testField - The field name to inspect within each document.
  * @param {string} containedValue - The expected value that must be contained in the test field.
+ * @param {number} [offset=0] - The number of documents to skip, useful for pagination. Defaults to 0.
+ * @param {number} [limit=10] - The maximum number of documents to return. Defaults to 10.
  * @param {...any} argv - Additional optional arguments for extended filtering or processing logic.
  * @returns {Array<Object>} An array of matching documents.
  */
-export async function scanDocuments(documentPrefix='*', testField, containedValue, ...argv) {
+export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
     const result = await redis.evalSha(sha, {
-        keys: [ documentPrefix, testField, containedValue ], 
+        keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
         arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
-    if ( argv.length !==0 )
-        return mapRowsToObjects(argv, result)
-    else 
-        return parseKeyValueArrays(result)
+    return result;
+   //  if ( argv.length !==0 )
+   //      return mapRowsToObjects(argv, result)
+   //  else 
+   //      return parseKeyValueArrays(result)
 }
 
 /*

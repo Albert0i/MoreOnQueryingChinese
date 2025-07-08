@@ -6,8 +6,8 @@
     KEYS[1] - Key pattern to scan for, "documents:" for example;
     KEYS[2] - Field name to scan for, "textChi" for example;
     KEYS[3] - Value to scan for, "韓非子" for example; 
-    KEYS[4] - The number of documents to skip, '0' for example; 
-    KEYS[5] - The maximum number of documents to return, '10' for example; 
+    KEYS[4] - The number of documents to skip, 0 for example; 
+    KEYS[5] - The maximum number of documents to return, 10 for example; 
     ARGV[] - Fields to be returned, ["id", "textChi", "visited"] for example.
 
   Returns:
@@ -15,7 +15,6 @@
 --]]
 local offset = tonumber(KEYS[4])
 local limit = tonumber(KEYS[5])
-
 local cursor = "0"  -- the cursor.
 local matched = {}  -- result to be returned 
 local index = 1     -- index to place retrieved value
@@ -31,32 +30,25 @@ repeat
     local text = redis.call("HGET", key, KEYS[2])
     
     -- If found and contains the value
-    if (text) and (string.find(text, KEYS[3])) then 
-      -- Skip offset 
-      if offset > 0 then 
-        offset = offset - 1
-      else 
-        -- Take limit 
-        if limit > 0 then 
-          -- If no field names specified to return 
-          if ARGV[1] == "*" then
-            matched[index] = redis.call("HGETALL", key)
-          else        
-            matched[index] = redis.call("HMGET", key, unpack(ARGV))
-          end
-
-          -- Increase the index 
-          index = index + 1
-          -- Decrease the limit
-          limit = limit - 1
-        else 
-          -- Readhed limit before scan completed
-          return matched
-        end 
-      end 
-    end 
+    if text and string.find(text, KEYS[3]) then 
+        -- Skip offset 
+        if offset > 0 then 
+            offset = offset - 1
+        else
+            -- If no field names specified to return 
+            if ARGV[1] == "*" then
+                matched[index] = redis.call("HGETALL", key)
+            else        
+                matched[index] = redis.call("HMGET", key, unpack(ARGV))
+            end
+            -- Increase the index 
+            index = index + 1
+        end
+    end
   end
-until (cursor == "0") -- Loop until no more keys found
+until cursor == "0" -- Loop until no more keys found
 
--- Scan completed
+matched[index] = {offset}
+matched[index+1] = {limit}
+
 return matched

@@ -7,7 +7,8 @@ await loadScript();
 /*
    main 
 */
-const result = await scanDocuments("fts:chinese:documents:*", "textChi", "人口", "id", "textChi", "visited") 
+//const result = await scanDocuments("fts:chinese:documents:*", "textChi", "人口", '1', '0', "id", "textChi", "visited") 
+const result = await scanDocuments("fts:chinese:documents:*", "textChi", "人口") 
 console.log(result); 
 
 await redis.close()
