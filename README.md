@@ -26,6 +26,7 @@ According to my unofficial and incomplete understanding, Chinese is *roughly* di
 
 #### II. The problem of Chinese (TL;DR)
 Due to high structural complexity and intrinsic ambiguity of Chinese, sentences tend to be elusive. For example: 
+
 -「兒子生性病母倍感安慰。」
 -「下雨天，留客天，天留我不留。」
 
