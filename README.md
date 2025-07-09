@@ -227,7 +227,7 @@ until (cursor == "0")
 return matched
 ```
 
-As you can see, the lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure... 
+The lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure... 
 
 
 #### IV. Using Faceted Search 
@@ -238,10 +238,10 @@ Observing the output of `tokenizer.js`:
 Once the tokenizer doesn't recognize the text, it simply adds a space after each word. The case is more severe when it comes to ancient Chinese. 
 
 The idea is simple: 
-1. To remove stop words from sentence; 
-2. Split the sentence in words;
-3. Add each word to sorted set; 
-4. Use join to find out the document keys. 
+1. To remove unnecessary punctuation symbol and stop words; 
+2. Split the sentence in tokens;
+3. Add each token to sorted set; 
+4. Use join to find out the matched keys. 
 ```
 ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:465"
 ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:470"
@@ -262,7 +262,7 @@ ZINTER 3 "fts:chinese:tokens:韓" "fts:chinese:tokens:非" "fts:chinese:tokens:�
 ```
 
 The downside of this method has two: 
-1. Have to remove and add again when text changed; 
+1. Have maintenance cost when frequently add/change/delete sentence is required. Better re-generate with on a regular base;
 2. May have false positive;
 
 For length of n, the total number of possible permutations is n!. So for **"韓非子"**: Total permutations 3! = 3 x 2 x 1 = 6. 
@@ -314,6 +314,56 @@ await Promise.all(promises)
 console.log('Seeding finished!')
 ```
 
+The use of sorted set is rather obscure. The score here is used to keep track of the occurrences a token within a sentence in later implementation. 
+```
+          promises.push(zAddIncr(
+                getTokenKeyName(token),
+                getDocumentKeyName(i + 1)
+            ))
+```
+
+After that, a word count can be created based on previous result. 
+`wc.js`
+```
+export async function wc() {
+  let counter = 0; 
+  let cursor = '0';
+  let keys = []
+  let promises = [];
+
+  do {
+    const result = await redis.scan(cursor, {
+      MATCH: 'fts:chinese:tokens:*',
+      COUNT: 100, // adjust batch size as needed
+    });
+
+    cursor = result.cursor;
+    keys = result.keys;
+
+    for (const key of keys) {
+        promises.push(redis.zAdd(
+            'fts:chinese:wc', { 
+                score: await zSumScore(key), 
+                value: key.split(':')[3]
+            }
+        ))
+        counter = counter + 1
+    }
+  } while (cursor !== '0');
+  await Promise.all(promises)
+  console.log(`Completed ${counter} sorted set.`)
+
+  return counter
+}
+```
+
+Now, you can query the top 10 most often used token in all sentences: 
+```
+ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
+```
+
+As you can see, with time and patience you can do much more with Redis... Your only boundary is imagination! 
+
 
 #### VI. Querying the database 
 `search3.js`
@@ -322,8 +372,13 @@ console.log('Seeding finished!')
 ```
 
 #### VII. Summary 
-510   2328-510  =1818
-1710  3639-1710 =1929
+| Sentences | Tokens |
+| -------- | -------- |
+| 510 | 1818 |
+| 1710 | 1929 |
+
+Moderate complexity, decent performance and scalable solution. 
+
 
 #### VIII. Bibliography
 1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
