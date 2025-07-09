@@ -1,24 +1,32 @@
 --[[
   Parameters:
     KEYS[1] - Key pattern to scan for, "documents:" for example;
-    KEYS[1] - Field name to scan for, "textChi" for example;
-    KEYS[2] - Value to scan for, "韓非子" for example; 
-    KEYS[3] - The number of documents to skip, '0' for example; 
-    KEYS[4] - The maximum number of documents to return, '10' for example; 
+    KEYS[2] - Field name to scan for, "textChi" for example;
+    KEYS[3] - Value to scan for, "韓非子" for example; 
+    KEYS[4] - The number of documents to skip, '0' for example; 
+    KEYS[5] - The maximum number of documents to return, '10' for example; 
     ARGV[] - Fields to be returned, ["id", "textChi", "visited"] for example.
 
   Returns:
     Array of array contains the search pattern.
 --]]
-
-return {KEYS, ARGV}
-
--- local offset = tonumber(KEYS[4])
--- local limit = tonumber(KEYS[5])
-
+local offset = tonumber(KEYS[4])
+local limit = tonumber(KEYS[5])
 -- local cursor = "0"  -- the cursor.
--- local matched = {}  -- result to be returned 
--- local index = 1     -- index to place retrieved value
+local matched = {}  -- result to be returned 
+local index = 1     -- index to place retrieved value
+local z = redis.call('ZINTER', #ARGV, unpack(ARGV))
+
+for _, key in ipairs(z) do 
+  local text = redis.call("HGET", key, KEYS[2])
+  if (text) and (string.find(text, KEYS[3])) then 
+    matched[index] = redis.call("HGETALL", key)
+    index = index + 1 
+  end
+end 
+
+return matched
+
 
 -- repeat
 --   local scan = redis.call("SCAN", cursor, "MATCH", KEYS[1], "COUNT", 100)
