@@ -104,7 +104,7 @@ To search with:
 In some sentences, "韓非子" is a token; while in others, "韓非" and "子曰" are tokens. "韓" and "非" are also tokens but not "子", most likely "子" is considered as stop word by tokenizer... I guess.  
 
 
-#### III. Object Inspection 
+#### III. Using Object Inspection 
 Our approach is simple and yet stupid: reading out all text fields and test they contain the word '韓非子'. 
 
 `search1.js`
@@ -178,6 +178,15 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
 }
 ```
 
+`scanDocuments` can be called with: 
+```
+const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非") 
+```
+Or more sophisticated with: 
+```
+const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非子", 0, 10, "id", "textChi") 
+```
+
 `scanTextChi.lua`
 ```
 local offset = tonumber(KEYS[4])
@@ -218,10 +227,10 @@ until (cursor == "0")
 return matched
 ```
 
-And this works much better. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure... 
+As you can see, the lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure... 
 
 
-#### IV. Faceted Search 
+#### IV. Using Faceted Search 
 Observing the output of `tokenizer.js`: 
 
 ![alt tokenizer](img/tokenizer.JPG)
