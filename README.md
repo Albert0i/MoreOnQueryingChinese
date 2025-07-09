@@ -323,6 +323,7 @@ The use of sorted set is rather obscure. The score here is used to keep track of
 ```
 
 After that, a word count can be created based on previous result. 
+
 `wc.js`
 ```
 export async function wc() {
@@ -367,6 +368,7 @@ As you can see, with a little bit effort and patience, you can do much more with
 
 #### VI. Querying the database 
 Now, come to our main course of querying the data: 
+
 `search3.js`
 ```
 
