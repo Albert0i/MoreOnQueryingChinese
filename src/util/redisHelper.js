@@ -389,7 +389,7 @@ export async function zSumScore(key) {
     });
 }
 
-export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10) {
+export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
    const tokens = spaceChineseChars(removeStopWord(containedValue)).
                      split(' ').
                      map(token => `${documentPrefix}${token}`)
@@ -397,9 +397,8 @@ export async function fsDocuments(documentPrefix, testField, containedValue, off
       keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
       arguments: tokens
   });
-  return result
-  //return result; 
-  //return parseKeyValueArrays(result)
+
+  return parseKeyValueArrays(result)
 }
 /*
     “Even the straightest road has its twist.”

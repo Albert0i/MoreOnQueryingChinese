@@ -23,8 +23,23 @@ for _, key in ipairs(z) do
 
   -- If found and contains the value
   if (text) and (string.find(text, KEYS[3])) then 
-    matched[index] = redis.call("HGETALL", key)
-    index = index + 1 
+    -- Skip offset 
+    if offset > 0 then 
+      offset = offset - 1
+    else 
+      -- Take limit 
+      if limit > 0 then 
+        matched[index] = redis.call("HGETALL", key)
+
+        -- Increase the index 
+        index = index + 1
+        -- Decrease the limit
+        limit = limit - 1
+      else 
+        -- Readhed limit before scan completed
+        return matched
+      end 
+    end 
   end
 end 
 
