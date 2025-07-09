@@ -313,8 +313,8 @@ export function transformSearchResults(inputArray) {
    Search by scanning 
 */
 const filePathS1 = path.join('.', 'src', 'lua', 'scanTextChi.lua');
-const filePathS2 = path.join('.', 'src', 'lua', 'fsTextChi.lua');
-const filePathS3 = path.join('.', 'src', 'lua', 'zAddIncr.lua');
+const filePathS2 = path.join('.', 'src', 'lua', 'zAddIncr.lua');
+const filePathS3 = path.join('.', 'src', 'lua', 'zSumScore.lua');
 
 const luaScriptS1 = fs.readFileSync(filePathS1, 'utf8');
 const luaScriptS2 = fs.readFileSync(filePathS2, 'utf8');
@@ -334,11 +334,11 @@ const luaScriptS3 = fs.readFileSync(filePathS3, 'utf8');
  * datastore connectivity problems, or file access errors.
  */
 let shaS1 = ''    // scanDocuments 
-let shaS2 = ''    // fsDocuments 
-let shaS3 = ''    // zAddIncr
+let shaS2 = ''    // zAddIncr
+let shaS3 = ''    // zSumScore
 export async function loadScript() {
    shaS1 = await redis.scriptLoad(luaScriptS1);
-   //shaS2 = await redis.scriptLoad(luaScriptS2);
+   shaS2 = await redis.scriptLoad(luaScriptS2);
    shaS3 = await redis.scriptLoad(luaScriptS3);
 
    return [ shaS1, shaS2, shaS3 ]
@@ -369,16 +369,23 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
         return parseKeyValueArrays(result)
 }
 
-export async function fsDocuments(testField, containedValue, offset=0, limit = 10, ...argv) {
-
-}
-
 export async function zAddIncr(key, member) {
-   return redis.evalSha(shaS3, {
+   return redis.evalSha(shaS2, {
       keys: [ key ],
       arguments: [ member ]
     });
 }
+
+export async function zSumScore(key) {
+   return redis.evalSha(shaS3, {
+      keys: [ key ],
+      arguments: [ ]
+    });
+}
+
+// export async function fsDocuments(testField, containedValue, offset=0, limit = 10, ...argv) {
+
+// }
 
 /*
     “Even the straightest road has its twist.”

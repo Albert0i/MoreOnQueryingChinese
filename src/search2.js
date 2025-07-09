@@ -1,12 +1,12 @@
 import { redis } from './redis/redis.js'
 import { scanDocuments, loadScript } from "./util/redisHelper.js";
 
-await redis.connect();
-await loadScript();
-
 /*
    main 
 */
+await redis.connect();
+await loadScript();
+
 //const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非") 
 const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非子", 0, 10, "id", "textChi") 
 

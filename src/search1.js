@@ -1,5 +1,4 @@
 import { redis } from './redis/redis.js'
-await redis.connect();
 
 export async function scanTextChi(pattern) {
   let counter = 0; 
@@ -32,6 +31,7 @@ export async function scanTextChi(pattern) {
 /*
    main
 */
+await redis.connect();
 const result = await scanTextChi('韓非子')
 
 console.log(result)

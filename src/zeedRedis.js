@@ -30,12 +30,14 @@ for (let i = 0; i < documents.length; i++) {
     const textChiSpc = spaceChineseChars(removeStopWord(documents[i]))
     textChiSpc.split(' ').map(token => {
         if (token) {
-            // promises.push(redis.zAdd(
-            //     getTokenKeyName(token), { 
-            //         score: 1, 
-            //         value: getDocumentKeyName(i + 1)
-            //     }
-            // ))
+        /*
+            promises.push(redis.zAdd(
+                getTokenKeyName(token), { 
+                    score: 1, 
+                    value: getDocumentKeyName(i + 1)
+                }
+            ))
+        */
             promises.push(zAddIncr(
                 getTokenKeyName(token),
                 getDocumentKeyName(i + 1)
@@ -48,15 +50,17 @@ console.log('Seeding finished!')
 
 await redis.close()
 
-// function spaceChineseChars(text) {
-//     return text.replace(/([\u4e00-\u9fff])/g, '$1 ');
-// }
+/*
+function spaceChineseChars(text) {
+    return text.replace(/([\u4e00-\u9fff])/g, '$1 ');
+}
+*/
 function spaceChineseChars(text) {
     // Match Chinese characters individually, and English words as a whole
     const pattern = /[\u4e00-\u9fff]|[a-zA-Z0-9]+/g;
     const tokens = text.match(pattern);
     return tokens ? tokens.join(' ') : '';
-  }
+}
 
 /*
 const now = new Date(); // Creates a Date object for the current date and time
