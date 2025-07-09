@@ -358,7 +358,7 @@ export async function wc() {
 }
 ```
 
-You can query the top 10 most often used tokens in all sentences with: 
+Finally, you can query the top 10 most often used tokens in all sentences with: 
 ```
 ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
 ```
