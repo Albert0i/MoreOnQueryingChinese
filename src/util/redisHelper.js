@@ -338,7 +338,7 @@ let shaS2 = ''    // fsDocuments
 let shaS3 = ''    // zAddIncr
 export async function loadScript() {
    shaS1 = await redis.scriptLoad(luaScriptS1);
-   shaS2 = await redis.scriptLoad(luaScriptS2);
+   //shaS2 = await redis.scriptLoad(luaScriptS2);
    shaS3 = await redis.scriptLoad(luaScriptS3);
 
    return [ shaS1, shaS2, shaS3 ]
