@@ -1,9 +1,10 @@
 import { redis } from './redis/redis.js'
-import { getDocumentKeyName, getTokenKeyName } from './util/redisHelper.js'
+import { getDocumentKeyName, getTokenKeyName, zAddIncr, loadScript } from './util/redisHelper.js'
 import { removeStopWord } from './util/stopWords.js'
 import { documents } from '../data/documents.js'
 
 await redis.connect()
+await loadScript()
 /*
     Flush all data 
     await redis.flushDb()
@@ -29,11 +30,15 @@ for (let i = 0; i < documents.length; i++) {
     const textChiSpc = spaceChineseChars(removeStopWord(documents[i]))
     textChiSpc.split(' ').map(token => {
         if (token) {
-            promises.push(redis.zAdd(
-                getTokenKeyName(token), { 
-                    score: 1, 
-                    value: getDocumentKeyName(i + 1)
-                }
+            // promises.push(redis.zAdd(
+            //     getTokenKeyName(token), { 
+            //         score: 1, 
+            //         value: getDocumentKeyName(i + 1)
+            //     }
+            // ))
+            promises.push(zAddIncr(
+                getTokenKeyName(token),
+                getDocumentKeyName(i + 1)
             ))
         }            
     })

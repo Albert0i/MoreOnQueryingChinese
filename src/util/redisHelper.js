@@ -312,26 +312,36 @@ export function transformSearchResults(inputArray) {
 /*
    Search by scanning 
 */
-const filePath = path.join('.', 'src', 'lua', 'scanTextChi.lua');
-const luaScript = fs.readFileSync(filePath, 'utf8');
+const filePathS1 = path.join('.', 'src', 'lua', 'scanTextChi.lua');
+const filePathS2 = path.join('.', 'src', 'lua', 'fsTextChi.lua');
+const filePathS3 = path.join('.', 'src', 'lua', 'zAddIncr.lua');
+
+const luaScriptS1 = fs.readFileSync(filePathS1, 'utf8');
+const luaScriptS2 = fs.readFileSync(filePathS2, 'utf8');
+const luaScriptS3 = fs.readFileSync(filePathS3, 'utf8');
 
 /**
- * Loads and registers a script into the system or datastore.
+ * Loads and registers scripts into the system or datastore.
  *
  * This function may be used to preload Lua scripts into Redis using `SCRIPT LOAD`,
  * register search syntax, or inject custom logic for later execution.
  *
  * @async
  * @function loadScript
- * @returns {string} A sha to the script's SHA1 hash or identifier upon successful registration.
+ * @returns {string} An array of sha's to the script's SHA1 hash or identifier upon successful registration.
  *
  * @throws {Error} Throws an error if the script loading fails due to syntax issues,
  * datastore connectivity problems, or file access errors.
  */
-let sha = ''
+let shaS1 = ''    // scanDocuments 
+let shaS2 = ''    // fsDocuments 
+let shaS3 = ''    // zAddIncr
 export async function loadScript() {
-   sha = await redis.scriptLoad(luaScript);
-   return sha
+   shaS1 = await redis.scriptLoad(luaScriptS1);
+   shaS2 = await redis.scriptLoad(luaScriptS2);
+   shaS3 = await redis.scriptLoad(luaScriptS3);
+
+   return [ shaS1, shaS2, shaS3 ]
 }
 
 /**
@@ -348,7 +358,7 @@ export async function loadScript() {
  * @returns {Array<Object>} An array of matching documents.
  */
 export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
-    const result = await redis.evalSha(sha, {
+    const result = await redis.evalSha(shaS1, {
             keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
             arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
@@ -357,6 +367,17 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
         return mapRowsToObjects(argv, result)
     else 
         return parseKeyValueArrays(result)
+}
+
+export async function fsDocuments(testField, containedValue, offset=0, limit = 10, ...argv) {
+
+}
+
+export async function zAddIncr(key, member) {
+   return redis.evalSha(shaS3, {
+      keys: [ key ],
+      arguments: [ member ]
+    });
 }
 
 /*

@@ -321,8 +321,12 @@ console.log('Seeding finished!')
 
 ```
 
+#### VII. Summary 
+510   2328-510  =1818
+1710  3639-1710 =1929
 
-#### VII. Bibliography
+#### VIII. Bibliography
+1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
 
 
 #### Epilogue 
