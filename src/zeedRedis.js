@@ -1,6 +1,6 @@
 import { redis } from './redis/redis.js'
 import { getDocumentKeyName, getTokenKeyName, zAddIncr, loadScript } from './util/redisHelper.js'
-import { removeStopWord } from './util/stopWords.js'
+import { removeStopWord, spaceChineseChars } from './util/stopWords.js'
 import { documents } from '../data/documents.js'
 
 await redis.connect()
@@ -54,13 +54,13 @@ await redis.close()
 function spaceChineseChars(text) {
     return text.replace(/([\u4e00-\u9fff])/g, '$1 ');
 }
-*/
 function spaceChineseChars(text) {
     // Match Chinese characters individually, and English words as a whole
     const pattern = /[\u4e00-\u9fff]|[a-zA-Z0-9]+/g;
     const tokens = text.match(pattern);
     return tokens ? tokens.join(' ') : '';
 }
+*/
 
 /*
 const now = new Date(); // Creates a Date object for the current date and time

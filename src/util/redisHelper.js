@@ -5,6 +5,7 @@ import 'dotenv/config'
 import fs from 'node:fs';
 import path from 'node:path';
 import { redis } from '../redis/redis.js'
+import { removeStopWord, spaceChineseChars } from './stopWords.js'
 
 /*
    Keys management 
@@ -388,13 +389,18 @@ export async function zSumScore(key) {
     });
 }
 
-export async function fsDocuments(testField, containedValue, offset=0, limit = 10, ...argv) {
-   return redis.evalSha(shaS3, {
-      keys: [ testField, containedValue, offset.toString(), limit.toString() ],
-      arguments: ( argv.length !== 0 ? argv : ["*"] )
-    });
+export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10) {
+   const tokens = spaceChineseChars(removeStopWord(containedValue)).
+                     split(' ').
+                     map(token => `${documentPrefix}${token}`)
+   const result = await redis.evalSha(shaS4, {
+      keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+      arguments: tokens
+  });
+  return result
+  //return result; 
+  //return parseKeyValueArrays(result)
 }
-
 /*
     “Even the straightest road has its twist.”
 */
