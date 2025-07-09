@@ -315,10 +315,12 @@ export function transformSearchResults(inputArray) {
 const filePathS1 = path.join('.', 'src', 'lua', 'scanTextChi.lua');
 const filePathS2 = path.join('.', 'src', 'lua', 'zAddIncr.lua');
 const filePathS3 = path.join('.', 'src', 'lua', 'zSumScore.lua');
+const filePathS4 = path.join('.', 'src', 'lua', 'fsTextChi.lua');
 
 const luaScriptS1 = fs.readFileSync(filePathS1, 'utf8');
 const luaScriptS2 = fs.readFileSync(filePathS2, 'utf8');
 const luaScriptS3 = fs.readFileSync(filePathS3, 'utf8');
+const luaScriptS4 = fs.readFileSync(filePathS4, 'utf8');
 
 /**
  * Loads and registers scripts into the system or datastore.
@@ -336,10 +338,13 @@ const luaScriptS3 = fs.readFileSync(filePathS3, 'utf8');
 let shaS1 = ''    // scanDocuments 
 let shaS2 = ''    // zAddIncr
 let shaS3 = ''    // zSumScore
+let shaS4 = ''    // fsDocuments
+
 export async function loadScript() {
    shaS1 = await redis.scriptLoad(luaScriptS1);
    shaS2 = await redis.scriptLoad(luaScriptS2);
    shaS3 = await redis.scriptLoad(luaScriptS3);
+   shaS4 = await redis.scriptLoad(luaScriptS4);
 
    return [ shaS1, shaS2, shaS3 ]
 }
@@ -383,9 +388,12 @@ export async function zSumScore(key) {
     });
 }
 
-// export async function fsDocuments(testField, containedValue, offset=0, limit = 10, ...argv) {
-
-// }
+export async function fsDocuments(testField, containedValue, offset=0, limit = 10, ...argv) {
+   return redis.evalSha(shaS3, {
+      keys: [ testField, containedValue, offset.toString(), limit.toString() ],
+      arguments: ( argv.length !== 0 ? argv : ["*"] )
+    });
+}
 
 /*
     “Even the straightest road has its twist.”
