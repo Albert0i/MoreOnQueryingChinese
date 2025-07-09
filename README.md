@@ -282,7 +282,7 @@ Here are the 6 combinations:
 
 
 #### V. Zeeding the database and more
-`zseedRedis.js` 
+`zeedRedis.js` 
 ```
 let promises = [];
 for (let i = 0; i < documents.length; i++) {
