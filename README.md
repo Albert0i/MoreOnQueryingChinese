@@ -281,7 +281,7 @@ Here are the 6 combinations:
 - College-educated native speakers typically know around **6,000–8,000** characters.
 
 
-#### V. Seeding the database 
+#### V. Zeeding the database and more
 `zseedRedis.js` 
 ```
 let promises = [];
@@ -357,19 +357,21 @@ export async function wc() {
 }
 ```
 
-Now, you can query the top 10 most often used token in all sentences: 
+You can query the top 10 most often used tokens in all sentences with: 
 ```
 ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
 ```
 
-As you can see, with time and patience you can do much more with Redis... Your only boundary is imagination! 
+As you can see, with a little bit effort and patience, you can do much more with Redis... The only boundary is your imagination! 
 
 
 #### VI. Querying the database 
+Now, come to our main course, querying the data: 
 `search3.js`
 ```
 
 ```
+
 
 #### VII. Summary 
 | Sentences | Tokens |
@@ -377,7 +379,7 @@ As you can see, with time and patience you can do much more with Redis... Your o
 | 510 | 1818 |
 | 1710 | 1929 |
 
-Moderate complexity, decent performance and scalable solution. 
+A moderate complexity, decent performance and scalable solution. 
 
 
 #### VIII. Bibliography
