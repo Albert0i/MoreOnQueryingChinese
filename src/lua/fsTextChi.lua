@@ -12,19 +12,23 @@
 --]]
 local offset = tonumber(KEYS[4])
 local limit = tonumber(KEYS[5])
--- local cursor = "0"  -- the cursor.
+
 local matched = {}  -- result to be returned 
 local index = 1     -- index to place retrieved value
 local z = redis.call('ZINTER', #ARGV, unpack(ARGV))
 
 for _, key in ipairs(z) do 
+  -- Get the field value to inspect 
   local text = redis.call("HGET", key, KEYS[2])
+
+  -- If found and contains the value
   if (text) and (string.find(text, KEYS[3])) then 
     matched[index] = redis.call("HGETALL", key)
     index = index + 1 
   end
 end 
 
+-- Search completed
 return matched
 
 
