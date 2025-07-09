@@ -366,7 +366,7 @@ As you can see, with a little bit effort and patience, you can do much more with
 
 
 #### VI. Querying the database 
-Now, come to our main course, querying the data: 
+Now, come to our main course of querying the data: 
 `search3.js`
 ```
 
