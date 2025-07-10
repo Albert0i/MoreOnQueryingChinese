@@ -268,7 +268,7 @@ ZINTER 3 "fts:chinese:tokens:韓" "fts:chinese:tokens:非" "fts:chinese:tokens:�
 
 The downside of this method has two: 
 1. Have maintenance cost when frequently add/change/delete sentence is required. Better re-generate with on a regular base;
-2. May have false positive;
+2. May have false-positive;
 
 For length of n, the total number of possible permutations is n!. So for **"韓非子"**: Total permutations 3! = 3 x 2 x 1 = 6. 
 
