@@ -358,9 +358,19 @@ export async function wc() {
 }
 ```
 
-And finally, you can query the top 10 most often used tokens in all sentences with: 
+And finally, you can query the top 10 most often used tokens among all sentences with: 
 ```
 ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
+```
+
+To disregard the duplicated occurrences of a token in sentences, use [ZCARD](https://redis.io/docs/latest/commands/zcard/) instead: 
+```
+        promises.push(redis.zAdd(
+                    'fts:chinese:wc', { 
+                        score: await zCard(key), 
+                        value: key.split(':')[3]
+                    }
+                ))
 ```
 
 As you can see, with a little bit effort and patience, you can do much more with Redis... The only boundary is your imagination! 
@@ -437,11 +447,16 @@ for _, key in ipairs(z) do
   end
 end 
 
--- Search completed
 return matched
 ```
 
-The lua script is virtually doing a full table scan in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure...
+The protagonist here in lua script is [ZINTER](https://redis.io/docs/latest/commands/zinter/) which is used to calculate sentences containing tokens to be searched for. It virtually does a index search in RDBMS terminology behind the scenes, then a subsequent scan is done to get rid of false-positive. 
+
+For sake of simplicity, this script returns everything in a `HASH` with `HGETALL`, and thus further use of `filterProperties` is required to wipe off unnecessary things. 
+
+For the best performance, [ZINTER](https://redis.io/docs/latest/commands/zinter/) should be started from the lowest to highest cardinality. 
+
+> O(N*K)+O(M*log(M)) worst case with N being the smallest input sorted set, K being the number of input sorted sets and M being the number of elements in the resulting sorted set.
 
 
 #### VII. Retrospection 
