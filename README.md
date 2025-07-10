@@ -26,7 +26,7 @@ According to my unofficial and incomplete understanding, Chinese is *roughly* di
 - [王左中右｜中文大约的确已经死了](https://chinadigitaltimes.net/chinese/681744.html)
 
 
-#### II. The problem of Chinese (TL;DR)
+#### II. The problem in Chinese
 Due to high structural complexity and intrinsic ambiguity of Chinese, sentences tend to be elusive. For example: 
 
 -「兒子生性病母倍感安慰。」
@@ -155,7 +155,7 @@ And that will do, the only problem is slow! A more elaborated implementation is 
 /*
    main 
 */
-const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非子", 0, 10, "id", "textChi") 
+const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 
 console.log(result)
 console.log(result.length)
@@ -167,7 +167,7 @@ console.log(result.length)
 ```
 export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
     const result = await redis.evalSha(sha, {
-            keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+            keys: [ `${documentPrefix}*`, testField, containedValue, offset.toString(), limit.toString() ], 
             arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
 
@@ -178,13 +178,13 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
 }
 ```
 
-`scanDocuments` can be called with: 
+`scanDocuments` can be called in two ways: 
 ```
-const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非") 
+const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非") 
 ```
 Or more sophisticated with: 
 ```
-const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非子", 0, 10, "id", "textChi") 
+const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 ```
 
 `scanTextChi.lua`
@@ -227,7 +227,7 @@ until (cursor == "0")
 return matched
 ```
 
-The lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure... 
+The lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is *not* scalable! It's ok with hundred thousands of sentences but definitely not with ten billions, for example. There must be better ways I assure... 
 
 
 #### IV. Using Faceted Search 
@@ -235,12 +235,12 @@ Observing the output of `tokenizer.js`:
 
 ![alt tokenizer](img/tokenizer.JPG)
 
-Once the tokenizer doesn't recognize the text, it simply adds a space after each word. The case is more severe when it comes to ancient Chinese. 
+When the tokenizer doesn't recognize the text, it simply adds a space after each word. The case is more severe when it comes to ancient Chinese. 
 
 The idea is simple: 
 1. To remove unnecessary punctuation symbol and stop words; 
 2. Split the sentence in tokens;
-3. Add each token to sorted set; 
+3. Add each token to Sorted Set; 
 4. Use join to find out the matched keys. 
 ```
 ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:465"
@@ -314,7 +314,7 @@ await Promise.all(promises)
 console.log('Seeding finished!')
 ```
 
-The use of sorted set is rather obscure. The score here is used to keep track of the occurrences a token within a sentence in later implementation. 
+The use of Sorted Set is rather obscure. The score here is used to keep track of the occurrences a token within a sentence in later implementation. 
 ```
           promises.push(zAddIncr(
                 getTokenKeyName(token),
@@ -352,13 +352,13 @@ export async function wc() {
     }
   } while (cursor !== '0');
   await Promise.all(promises)
-  console.log(`Completed ${counter} sorted set.`)
+  console.log(`Completed ${counter} Sorted Set.`)
 
   return counter
 }
 ```
 
-Finally, you can query the top 10 most often used tokens in all sentences with: 
+And finally, you can query the top 10 most often used tokens in all sentences with: 
 ```
 ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
 ```
@@ -367,19 +367,89 @@ As you can see, with a little bit effort and patience, you can do much more with
 
 
 #### VI. Querying the database 
-Now, come to our main course and time to query the data: 
+Now, time to query the data: 
 
 `search3.js`
 ```
+/*
+   main 
+*/
+const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 
+console.log(result)
+console.log(result.length)
 ```
 
+![alt search3](img/search3.JPG)
 
-#### VII. Summary 
+`redisHelper.js`
+```
+export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
+   const tokens = spaceChineseChars(removeStopWord(containedValue)).
+                     split(' ').
+                     map(token => `${documentPrefix}${token}`)
+   const result = await redis.evalSha(shaS4, {
+      keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+      arguments: tokens
+   });
+
+   if ( argv.length !==0 )
+      return filterProperties(parseKeyValueArrays(result), argv)
+   else 
+      return parseKeyValueArrays(result)
+}
+```
+
+`fsDocuments` can be called in two ways: 
+```
+const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非") 
+```
+Or more sophisticated with: 
+```
+const result = await scanDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi") 
+```
+
+`fsTextChi.lua`
+```
+local offset = tonumber(KEYS[4])
+local limit = tonumber(KEYS[5])
+
+local matched = {}
+local index = 1
+local z = redis.call('ZINTER', #ARGV, unpack(ARGV))
+
+for _, key in ipairs(z) do 
+  local text = redis.call("HGET", key, KEYS[2])
+
+  if (text) and (string.find(text, KEYS[3])) then 
+    if offset > 0 then 
+      offset = offset - 1
+    else 
+      if limit > 0 then 
+        matched[index] = redis.call("HGETALL", key)
+
+        index = index + 1
+        limit = limit - 1
+      else 
+        return matched
+      end 
+    end 
+  end
+end 
+
+-- Search completed
+return matched
+```
+
+The lua script is virtually doing a full table scan in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is not scalable! It's ok with thousands of records but not ten billions, for example. There must be better ways I assure...
+
+
+#### VII. Retrospection 
 | Sentences | Tokens |
 | -------- | -------- |
 | 510 | 1818 |
 | 1710 | 1929 |
+| 1713 | 1998 |
 
 A moderate complexity, decent performance and scalable solution. 
 
@@ -389,6 +459,12 @@ A moderate complexity, decent performance and scalable solution.
 
 
 #### Epilogue 
+Looking at the Chinese... it's so devastated, rotten, deteriorated, degenerated, eroded, ruined, broken, castrated, smashed, battered, impaired and depraved today, being a Chinese is more a curse than blessing. For sure Chinese was a poetic and lyrical language, but people use it every but rarely learn it anymore... 
+
+雨後的清晨吹起暖風，
+失落的心難掩傷痛，
+是昨日我喚醒明日我，
+前方還有更多的夢，zｚＺ。
 
 
 ### EOF (2025/07/31)

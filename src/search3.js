@@ -7,8 +7,8 @@ import { fsDocuments, loadScript } from "./util/redisHelper.js";
 await redis.connect();
 await loadScript();
 
-//const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非") 
-const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi", "visited") 
+//const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非子") 
+const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 
 console.log(result)
 console.log(result.length)

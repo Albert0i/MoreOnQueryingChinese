@@ -365,7 +365,7 @@ export async function loadScript() {
  */
 export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
     const result = await redis.evalSha(shaS1, {
-            keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+            keys: [ `${documentPrefix}*`, testField, containedValue, offset.toString(), limit.toString() ], 
             arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
 
@@ -396,10 +396,26 @@ export async function fsDocuments(documentPrefix, testField, containedValue, off
    const result = await redis.evalSha(shaS4, {
       keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
       arguments: tokens
-  });
+   });
 
-  return parseKeyValueArrays(result)
+   if ( argv.length !==0 )
+      return filterProperties(parseKeyValueArrays(result), argv)
+   else 
+      return parseKeyValueArrays(result)
 }
+
+function filterProperties(data, allowedKeys) {
+   return data.map(item => {
+     const filtered = {};
+     for (const key of allowedKeys) {
+       if (key in item) {
+         filtered[key] = item[key];
+       }
+     }
+     return filtered;
+   });
+ }
+
 /*
     “Even the straightest road has its twist.”
 */
