@@ -316,12 +316,14 @@ export function transformSearchResults(inputArray) {
 const filePathS1 = path.join('.', 'src', 'lua', 'scanTextChi.lua');
 const filePathS2 = path.join('.', 'src', 'lua', 'zAddIncr.lua');
 const filePathS3 = path.join('.', 'src', 'lua', 'zSumScore.lua');
-const filePathS4 = path.join('.', 'src', 'lua', 'fsTextChi.lua');
+const filePathS4v1 = path.join('.', 'src', 'lua', 'fsTextChi.v1.lua');
+const filePathS4v2 = path.join('.', 'src', 'lua', 'fsTextChi.v2.lua');
 
 const luaScriptS1 = fs.readFileSync(filePathS1, 'utf8');
 const luaScriptS2 = fs.readFileSync(filePathS2, 'utf8');
 const luaScriptS3 = fs.readFileSync(filePathS3, 'utf8');
-const luaScriptS4 = fs.readFileSync(filePathS4, 'utf8');
+const luaScriptS4v1 = fs.readFileSync(filePathS4v1, 'utf8');
+const luaScriptS4v2 = fs.readFileSync(filePathS4v2, 'utf8');
 
 /**
  * Loads and registers scripts into the system or datastore.
@@ -339,15 +341,17 @@ const luaScriptS4 = fs.readFileSync(filePathS4, 'utf8');
 let shaS1 = ''    // scanDocuments 
 let shaS2 = ''    // zAddIncr
 let shaS3 = ''    // zSumScore
-let shaS4 = ''    // fsDocuments
+let shaS4v1 = ''  // fsDocuments
+let shaS4v2 = ''  // fsDocuments
 
 export async function loadScript() {
    shaS1 = await redis.scriptLoad(luaScriptS1);
    shaS2 = await redis.scriptLoad(luaScriptS2);
    shaS3 = await redis.scriptLoad(luaScriptS3);
-   shaS4 = await redis.scriptLoad(luaScriptS4);
+   shaS4v1 = await redis.scriptLoad(luaScriptS4v1);
+   shaS4v2 = await redis.scriptLoad(luaScriptS4v2);
 
-   return [ shaS1, shaS2, shaS3 ]
+   return [ shaS1, shaS2, shaS3, shaS4v1, shaS4v2 ]
 }
 
 /**
@@ -389,11 +393,11 @@ export async function zSumScore(key) {
     });
 }
 
-export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
+export async function fsDocumentsV1(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
    const tokens = spaceChineseChars(removeStopWord(containedValue)).
                      split(' ').
                      map(token => `${documentPrefix}${token}`)
-   const result = await redis.evalSha(shaS4, {
+   const result = await redis.evalSha(shaS4v1, {
       keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
       arguments: tokens
    });
@@ -413,6 +417,63 @@ function filterProperties(data, allowedKeys) {
        }
      }
      return filtered;
+   });
+ }
+
+ export async function fsDocumentsV2(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
+   const tokens = spaceChineseChars(removeStopWord(containedValue)).
+                     split(' ').
+                     map(token => `${documentPrefix}${token}`)
+   const result = await redis.evalSha(shaS4v2, {
+      keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+      arguments: tokens
+   });
+   
+   if ( argv.length !==0 )
+      return filterProperties(convertNestedToObjectsWithScore(result), argv)
+   else 
+      return convertNestedToObjectsWithScore(result)
+}
+
+/**
+ * Converts a nested array of entries into an array of structured objects.
+ * 
+ * Each entry is expected to contain:
+ * - A flat array of key-value pairs (e.g., ['id', '123', 'textChi', '...'])
+ * - A numeric value (e.g., a score) associated with the entry
+ * 
+ * The function transforms each entry into an object with fields derived from the key-value pairs,
+ * and adds a `score` field based on the accompanying numeric value.
+ * 
+ * @param {Array} nestedArray - An array of entries, where each entry is a 2-element array:
+ *   [flatKeyValueArray, score]
+ * @returns {Array<Object>} A new array of objects, each with structured fields and a `score` property
+ * 
+ * @example
+ * const input = [
+ *   [['id', '59', 'textChi', '...', 'visited', '0'], 3],
+ *   [['id', '61', 'textChi', '...', 'visited', '1'], 2]
+ * ];
+ * 
+ * const result = convertNestedToObjectsWithScore(input);
+ * console.log(result);
+ * // [
+ * //   { id: '59', textChi: '...', visited: '0', score: 3 },
+ * //   { id: '61', textChi: '...', visited: '1', score: 2 }
+ * // ]
+ */
+function convertNestedToObjectsWithScore(nestedArray) {
+   return nestedArray.map(entry => {
+     const flat = entry[0];  // key-value pairs
+     const score = entry[1]; // numeric value
+     const obj = {};
+ 
+     for (let i = 0; i < flat.length; i += 2) {
+       obj[flat[i]] = flat[i + 1];
+     }
+ 
+     obj.score = score; // Add the score field
+     return obj;
    });
  }
 

@@ -2,8 +2,17 @@
 
 #### Prologue 
 
-#### I. 
+#### I. The missing score
+```
+ZINTER 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界"  AGGREGATE MIN WITHSCORES
 
+ZINTERSTORE "fts:chinese:tokens:世界" 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界"  AGGREGATE MIN
+
+ZREVRANGEBYSCORE "fts:chinese:tokens:世界" +inf -inf WITHSCOREs LIMIT 0 10
+
+HGETALL ""fts:chinese:documents:59""
+
+```
 #### II. 
 
 #### III. 
