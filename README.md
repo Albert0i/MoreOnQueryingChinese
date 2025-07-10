@@ -4,8 +4,14 @@
 
 
 #### Prologue
-peculiarity and semantic ambiguity. 
-scrape crumb from previous project.
+```
+桃花庵觀湧雲霞，芍葯煙籠太守家，
+是誰檀匣藏小軸，夜雨挑燈細看查。
+
+近睹分明似儼然，遠觀自在若飛仙，
+他年得傍蟾宮客，不在梅邊在柳邊。
+```
+[牡丹亭驚夢之幽媾](https://www.circlelo.com/mwm/CHINESE/%E7%B2%B5%E5%8A%87/%E7%89%A1%E4%B8%B9%E4%BA%AD%E9%A9%9A%E5%A4%A2/%E7%89%A1%E4%B8%B9%E4%BA%AD%E9%A9%9A%E5%A4%A2%E4%B9%8B%E5%B9%BD%E5%AA%BE.htm)
 
 
 #### I. A taxonomy (TL;DR)
@@ -500,3 +506,5 @@ zｚＺ。
 
 
 ### EOF (2025/07/31)
+peculiarity and semantic ambiguity. 
+scrape crumb from previous project.
