@@ -21,9 +21,10 @@ local index = 1     -- index to place retrieved value
 local tempkey = 'temp:'..KEYS[2]  -- destination key
 local tempkeyTTL = 30             -- delete after n seconds 
 local args = {}
+
+-- Prepare parameters for "ZINTERSTORE"
 table.insert(args, tempkey)       -- destination key
 table.insert(args, #ARGV)         -- number of source keys
-
 for i = 1, #ARGV do
   table.insert(args, ARGV[i])     -- source keys
 end
@@ -35,7 +36,7 @@ table.insert(args, 'MIN')
 local n = redis.call('ZINTERSTORE', unpack(args))
 redis.call('EXPIRE', tempkey, tempkeyTTL)   -- delete after n seconds 
 
--- If result is not empty 
+-- If intersect is not empty 
 if ( n > 0 ) then 
   -- ZREVRANGEBYSCORE "fts:chinese:tokens:世界" +inf -inf WITHSCOREs LIMIT 0 10
   local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES', 'LIMIT', offset, limit)
@@ -57,4 +58,5 @@ if ( n > 0 ) then
   end
 end
 
+-- Search completed
 return matched
