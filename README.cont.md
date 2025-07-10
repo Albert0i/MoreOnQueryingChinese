@@ -1,8 +1,12 @@
 ### More On Querying Chinese (cont.)
 
+> [不問蒼生問 AI。](https://www.kmdn.gov.tw/1117/1271/1274/167810)
+
+
 #### Prologue 
 
-#### I. The missing score
+
+#### I. And the missing score...?
 ```
 ZINTER 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界"  AGGREGATE MIN WITHSCORES
 
