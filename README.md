@@ -460,13 +460,28 @@ For the best performance, [ZINTER](https://redis.io/docs/latest/commands/zinter/
 
 
 #### VII. Retrospection 
+Along the way, we have implemented a moderate complexity, decent performance and scalable solution using faceted search. When it comes to do searching on Chinese data, try to consider: 
+1. Data size 
+2. Frequency of change 
+3. Tolerance in speed 
+4. Effort to put 
+
+To conclude our journey, the following table is number of sentences versus tokens in our example: 
+
 | Sentences | Tokens |
 | -------- | -------- |
 | 510 | 1818 |
 | 1710 | 1929 |
 | 1713 | 1998 |
 
-A moderate complexity, decent performance and scalable solution. 
+And search power between MariaDB and Redis at a glance: 
+
+| Type of search | MariaDB | Redis |
+| -------- | -------- | -------- |
+| Vector capability | Medium  | High |
+| Fulltext tokenization | Manual | Automatic |
+| Pattern | LIKE + % | SCAN + HGET | 
+| Faceted | No | Yes | 
 
 
 #### VIII. Bibliography
@@ -474,18 +489,14 @@ A moderate complexity, decent performance and scalable solution.
 
 
 #### Epilogue 
-Looking at the Chinese... it's so devastated, rotten, deteriorated, degenerated, eroded, ruined, broken, castrated, smashed, battered, impaired and depraved today, being a Chinese is more a curse than blessing. For sure Chinese was a poetic and lyrical language, but people use it every but rarely learn it anymore... 
+Looking at the Chinese... it's so devastated, rotten, deteriorated, degenerated, eroded, ruined, broken, castrated, smashed, battered, impaired and depraved today, being a Chinese is more a curse than blessing. For sure Chinese was a poetic and lyrical language, people use it every day but rarely learn it anymore... 
 
+```
 雨後的清晨吹起暖風，
 失落的心難掩傷痛，
 是昨日我喚醒明日我，
 前方還有更多的夢，zｚＺ。
+```
 
 
 ### EOF (2025/07/31)
-
-「」
-「」
-「」
-「」
-「」
