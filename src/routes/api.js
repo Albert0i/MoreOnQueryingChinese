@@ -3,7 +3,7 @@ import express from 'express';
 //import { findSimilarDocuments, addDocument } from '../embedder.js';
 
 // import { getStatus, getDocument, findDocuments, countDocuments } from '../mariadbHelper.js'
-import { countDocuments, findDocuments, getStatus, getDocument } from '../util/redisHelper.js'
+import { fsDocuments, countDocuments, findDocuments, getStatus, getDocument } from '../util/redisHelper.js'
 
 const router = express.Router();
 
@@ -13,7 +13,8 @@ const router = express.Router();
 // POST /api/v1/search
 router.post('/search', async (req, res) => {
   const { query } = req.body;
-  const results = await findSimilarDocuments(query, process.env.MAX_FIND_RETURN)  
+  //const results = await findSimilarDocuments(query, process.env.MAX_FIND_RETURN)  
+  const results = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 
   res.status(200).json(results)
 });
@@ -70,35 +71,35 @@ router.get('/ftcheck', async (req, res) => {
   res.status(200).json({ success: true, count })
 });
 
-/*
-   Fulltext Search (Redis)
-*/
-// POST /api/v1/ftsredis
-router.post('/ftsredis', async (req, res) => {  
-  const { query } = req.body;
-  const results = await findDocumentsRedis(query, 0, process.env.MAX_FIND_RETURN)
+// /*
+//    Fulltext Search (Redis)
+// */
+// // POST /api/v1/ftsredis
+// router.post('/ftsredis', async (req, res) => {  
+//   const { query } = req.body;
+//   const results = await findDocumentsRedis(query, 0, process.env.MAX_FIND_RETURN)
   
-  res.status(200).json(results)
-})
+//   res.status(200).json(results)
+// })
 
-// GET /api/v1/ftcheckredis
-router.get('/ftcheckredis', async (req, res) => {  
-  const { query } = req.query
-  const count = await countDocumentsRedis(query)
+// // GET /api/v1/ftcheckredis
+// router.get('/ftcheckredis', async (req, res) => {  
+//   const { query } = req.query
+//   const count = await countDocumentsRedis(query)
   
-  res.status(200).json({ success: true, count })
-})
+//   res.status(200).json({ success: true, count })
+// })
 
-// GET /api/v1/statsredis
-router.get('/statsredis', async (req, res) => {
-  res.status(200).json(await getStatusRedis())
-});
+// // GET /api/v1/statsredis
+// router.get('/statsredis', async (req, res) => {
+//   res.status(200).json(await getStatusRedis())
+// });
 
-// GET /api/v1/detailsredis?id=xxx
-router.get('/detailsredis', async (req, res) => {
-  const id = parseInt(req.query.id, 10);
+// // GET /api/v1/detailsredis?id=xxx
+// router.get('/detailsredis', async (req, res) => {
+//   const id = parseInt(req.query.id, 10);
 
-  res.status(200).json(await getDocumentRedis(id))
-});
+//   res.status(200).json(await getDocumentRedis(id))
+// });
 
 export default router;
