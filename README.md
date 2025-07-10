@@ -429,32 +429,40 @@ const result = await scanDocuments("fts:chinese:tokens:", "textChi", "韓非子"
 
 `fsTextChi.lua`
 ```
-local offset = tonumber(KEYS[4])
-local limit = tonumber(KEYS[5])
+local offset = tonumber(KEYS[3])
+local limit = tonumber(KEYS[4])
 
-local matched = {}
-local index = 1
+local matched = {}  -- result to be returned 
+local index = 1     -- index to place retrieved value
 local z = redis.call('ZINTER', #ARGV, unpack(ARGV))
 
 for _, key in ipairs(z) do 
-  local text = redis.call("HGET", key, KEYS[2])
+  -- Get the field value to inspect 
+  local text = redis.call("HGET", key, KEYS[1])
 
-  if (text) and (string.find(text, KEYS[3])) then 
+  -- If found and contains the value
+  if (text) and (string.find(text, KEYS[2])) then 
+    -- Skip offset 
     if offset > 0 then 
       offset = offset - 1
     else 
+      -- Take limit 
       if limit > 0 then 
         matched[index] = redis.call("HGETALL", key)
 
+        -- Increase the index 
         index = index + 1
+        -- Decrease the limit
         limit = limit - 1
       else 
+        -- Readhed limit before scan completed
         return matched
       end 
     end 
   end
 end 
 
+-- Search completed
 return matched
 ```
 
