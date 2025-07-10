@@ -402,12 +402,12 @@ console.log(result.length)
 
 `redisHelper.js`
 ```
-export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
+export async function fsDocumentsV1(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
    const tokens = spaceChineseChars(removeStopWord(containedValue)).
                      split(' ').
                      map(token => `${documentPrefix}${token}`)
-   const result = await redis.evalSha(shaS4, {
-      keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+   const result = await redis.evalSha(shaS4v1, {
+      keys: [ testField, containedValue, offset.toString(), limit.toString() ], 
       arguments: tokens
    });
 
@@ -514,6 +514,16 @@ Looking at the Chinese... it's so devastated, rotten, deteriorated, degenerated,
 是昨日我喚醒明日我，
 前方還有更多的夢，
 zｚＺ。
+```
+
+A translation: 
+
+```
+A rain last night breaths out lukewarm,
+Downcast soul and yet in mourn,
+It's me flit from yestereve to morrow,
+Dreams further and farther many more,
+zｚＺ. 
 ```
 
 
