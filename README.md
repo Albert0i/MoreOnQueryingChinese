@@ -495,7 +495,8 @@ Looking at the Chinese... it's so devastated, rotten, deteriorated, degenerated,
 雨後的清晨吹起暖風，
 失落的心難掩傷痛，
 是昨日我喚醒明日我，
-前方還有更多的夢，zｚＺ。
+前方還有更多的夢，
+zｚＺ。
 ```
 
 
