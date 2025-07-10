@@ -491,6 +491,7 @@ And search power between MariaDB and Redis at a glance:
 | Pattern | LIKE + % | SCAN + HGET | 
 | Faceted | No | Yes | 
 
+[Continue to read...](README.cont.md)
 
 #### VIII. Bibliography
 1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
@@ -508,10 +509,4 @@ zｚＺ。
 ```
 
 
-### EOF (2025/07/31)
-```
-ZINTER 3 "fts:chinese:tokens:韓" "fts:chinese:tokens:非" "fts:chinese:tokens:子" AGGREGATE MIN WITHSCORES
-```
-
-peculiarity and semantic ambiguity. 
-scrape crumb from previous project.
+### EOF (2025/07/11)
