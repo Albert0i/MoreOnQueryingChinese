@@ -1,12 +1,11 @@
 ### More On Querying Chinese
 
-scrape crumb from previous project.
-
-What is different in RDBMS is easy in Redis; what is easy in RDBMS is difficult in Redis. 
+> What is hard in SQL is easy in Redis and vice versa. 
 
 
 #### Prologue
 peculiarity and semantic ambiguity. 
+scrape crumb from previous project.
 
 
 #### I. A taxonomy (TL;DR)
