@@ -1,5 +1,5 @@
 import { redis } from './redis/redis.js'
-import { fsDocumentsV2, loadScript } from "./util/redisHelper.js";
+import { fsDocumentsV2 as fsDocuments, loadScript } from "./util/redisHelper.js";
 
 /*
    main 
@@ -7,8 +7,8 @@ import { fsDocumentsV2, loadScript } from "./util/redisHelper.js";
 await redis.connect();
 await loadScript();
 
-//const result = await fsDocumentsV2("fts:chinese:tokens:", "textChi", "世界") 
-const result = await fsDocumentsV2("fts:chinese:tokens:", "textChi", "世界", 0, 10, "id", "textChi", "score") 
+//const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界") 
+const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界", 0, 10, "id", "textChi", "score") 
 
 console.log(result)
 console.log(result.length)

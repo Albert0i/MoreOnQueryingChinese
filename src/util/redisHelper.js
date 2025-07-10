@@ -398,7 +398,7 @@ export async function fsDocumentsV1(documentPrefix, testField, containedValue, o
                      split(' ').
                      map(token => `${documentPrefix}${token}`)
    const result = await redis.evalSha(shaS4v1, {
-      keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+      keys: [ testField, containedValue, offset.toString(), limit.toString() ], 
       arguments: tokens
    });
 
@@ -425,7 +425,7 @@ function filterProperties(data, allowedKeys) {
                      split(' ').
                      map(token => `${documentPrefix}${token}`)
    const result = await redis.evalSha(shaS4v2, {
-      keys: [ documentPrefix, testField, containedValue, offset.toString(), limit.toString() ], 
+      keys: [ testField, containedValue, offset.toString(), limit.toString() ], 
       arguments: tokens
    });
    

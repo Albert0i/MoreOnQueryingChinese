@@ -1,6 +1,6 @@
 --[[
   Lua script to scan Redis for hashes matching "document:*"
-  and return HASH objects whose "textChi" field contains a given pattern.
+  and return HASH objects.
 
   Parameters:
     KEYS[1] - Key pattern to scan for, "documents:" for example;
@@ -11,7 +11,7 @@
     ARGV[] - Fields to be returned, ["id", "textChi", "visited"] for example.
 
   Returns:
-    Array of array contains the search pattern.
+    Array of array contains the documents.
 --]]
 local offset = tonumber(KEYS[4])
 local limit = tonumber(KEYS[5])
