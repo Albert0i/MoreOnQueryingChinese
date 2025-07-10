@@ -368,6 +368,9 @@ And finally, you can query the top 10 most often used tokens among all sentences
 ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
 ```
 
+![alt wc](img/wc.JPG)
+
+
 To disregard the duplicated occurrences of a token in sentences, use [ZCARD](https://redis.io/docs/latest/commands/zcard/) instead: 
 ```
         promises.push(redis.zAdd(
