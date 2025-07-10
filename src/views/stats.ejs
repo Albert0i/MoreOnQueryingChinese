@@ -11,7 +11,16 @@
   
   <% if (stats) { %>
     <div id="meta" class="text-lg text-gray-600 mb-2 space-y-1">
-      <p>📕資料庫版本：<strong><%= stats.version %></strong></p>      
+      <p>
+        <% if (stats.version.includes("Redis")) { %>
+          📕
+        <% } else  { %> 
+          🐬
+        <% } %>
+        資料庫版本：<strong><%= stats.version %></strong>
+      </p>      
+      <!-- <p>🔧 資料庫版本：<strong><%= stats.version %></strong></p> -->
+      <p>🔧 使用的模型：<%= stats.model %></p>
       <p>📄 全部文件數：<strong><%= stats.documents %></strong></p>
       <p>📄 資料總容量：<strong><%= stats.size %> MB</strong></p>
       <p>🎯 搜尋命中數：<strong><%= stats.visited %></strong></p>
@@ -23,7 +32,11 @@
           <p class="text-gray-800 text-base mb-1">💬 <%= item.textChi %></p>
           <p class="text-sm text-gray-500">
             🆔 
-              <a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a>            
+            <% if (stats.version.includes("Redis"))  { %>
+              <a href="/detailsredis/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a>
+            <% } else  { %> 
+              <a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a>
+            <% } %>            
             | 👁️‍🗨️ Visited: <%= item.visited %>
           </p>
         </div>

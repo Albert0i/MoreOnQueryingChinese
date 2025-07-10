@@ -6,6 +6,7 @@ import router from './routes/index.js';
 import apiRouter from './routes/api.js';
 import { handle404 } from './middleware/handle404.js'
 import { redis } from './redis/redis.js'
+import { loadScript } from './util/redisHelper.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,6 +36,7 @@ const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
 
 await redis.connect()
+await loadScript()
 app.listen(PORT, () => {
         console.log(`🔷 [🚀] Server running at 🌍 http://${HOST}:${PORT} 🔷`);
     } ).on('error', (error) => {
