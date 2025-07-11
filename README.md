@@ -402,7 +402,7 @@ console.log(result.length)
 
 `redisHelper.js`
 ```
-export async function fsDocumentsV1(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
+export async function fsDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
    const tokens = spaceChineseChars(removeStopWord(containedValue)).
                      split(' ').
                      map(token => `${documentPrefix}${token}`)

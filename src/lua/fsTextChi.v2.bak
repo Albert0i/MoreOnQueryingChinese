@@ -20,36 +20,21 @@ local index = 1     -- index to place retrieved value
 
 local tempkey = 'temp:'..KEYS[2]  -- destination key
 local tempkeyTTL = 30             -- delete after n seconds 
-
--- Step 1: Collect cardinalities
-local sets = {}
-for i = 1, #ARGV do
-  local key = ARGV[i]
-  local count = redis.call('ZCARD', key)
-  table.insert(sets, { key = key, count = count })
-end
-
--- Step 2: Sort by cardinality (ascending)
-table.sort(sets, function(a, b)
-  return a.count < b.count
-end)
-
--- Step 3: Build args for ZINTERSTORE
 local args = {}
-table.insert(args, tempkey)         -- destination key
-table.insert(args, #sets)           -- number of source keys
 
-for i = 1, #sets do
-  table.insert(args, sets[i].key)   -- sorted source keys
+-- Prepare parameters for "ZINTERSTORE"
+table.insert(args, tempkey)       -- destination key
+table.insert(args, #ARGV)         -- number of source keys
+for i = 1, #ARGV do
+  table.insert(args, ARGV[i])     -- source keys
 end
 
--- Step 4: Add aggregation method
+-- Optional: aggregation and scores
 table.insert(args, 'AGGREGATE')
 table.insert(args, 'MIN')
 
--- Step 5: Execute and expire
 local n = redis.call('ZINTERSTORE', unpack(args))
-redis.call('EXPIRE', tempkey, tempkeyTTL)
+redis.call('EXPIRE', tempkey, tempkeyTTL)   -- delete after n seconds 
 
 -- If intersect is not empty 
 if ( n > 0 ) then 
