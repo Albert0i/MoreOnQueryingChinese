@@ -233,6 +233,20 @@ Doing this extra steps may of great help to your application...
 
 
 #### III. A Crumb from [Vector Semantic Search in Chinese using MariaDB](https://github.com/Albert0i/mariadb-vss-chinese)
+Start the server: 
+```
+npm run dev 
+```
+
+And navigate to [http://localhost:3000](http://localhost:3000): 
+
+![alt welcome](img/welcome.JPG)
+
+![alt search](img/search.JPG)
+
+![alt details](img/details.JPG)
+
+Have fun! 
 
 
 #### IV. Retrospection 
