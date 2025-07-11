@@ -42,6 +42,14 @@ export function getTokenKeyName(id) {
    return `fts:chinese:tokens:${id}`
 }
 
+export function getWceyName() {
+   return 'fts:chinese:wc'
+}
+
+export function getVisitedKeyName() {
+   return 'fts:chinese:visited'
+}
+
 /*
    Index management 
 */
@@ -482,6 +490,7 @@ function filterProperties(data, allowedKeys) {
                         .hIncrBy(docKey, 'visited', 1)
                         .hSet(docKey, 'updatedAt', isoDate)
                         .hIncrBy(docKey, 'updateIdent', 1)
+                        // .zAddIncr(getVisitedKeyName(), docKey)
                         .exec()
             )
         })

@@ -1,5 +1,5 @@
 import { redis } from './redis/redis.js'
-import { loadScript, zSumScore } from './util/redisHelper.js'
+import { loadScript, zSumScore, getWceyName } from './util/redisHelper.js'
 
 export async function wc() {
   let counter = 0; 
@@ -18,7 +18,7 @@ export async function wc() {
 
     for (const key of keys) {
         promises.push(redis.zAdd(
-            'fts:chinese:wc', { 
+            getWceyName(), { 
                 score: await zSumScore(key), 
                 value: key.split(':')[3]
             }
