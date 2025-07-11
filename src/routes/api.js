@@ -8,19 +8,18 @@ const router = express.Router();
 // POST /api/v1/search
 router.post('/search', async (req, res) => {  
   const { query } = req.body;
-  //const results = await fsDocuments(query, 0, process.env.MAX_FIND_RETURN)
   const results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, process.env.MAX_FIND_RETURN, "id", "textChi", "score") 
   
   res.status(200).json(results)
 })
 
-// GET /api/v1/ftcheck
-// router.get('/ftcheck', async (req, res) => {  
-//   const { query } = req.query
-//   const count = await countDocuments(query)
+// GET /api/v1/check
+router.get('/check', async (req, res) => {  
+  const { query } = req.query
+  const results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, process.env.MAX_FIND_RETURN, "id", "textChi", "score") 
   
-//   res.status(200).json({ success: true, count })
-// })
+  res.status(200).json({ success: true, count: results.length })
+})
 
 // GET /api/v1/details?id=xxx
 router.get('/details', async (req, res) => {
