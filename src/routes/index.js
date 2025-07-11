@@ -26,6 +26,14 @@ router.post('/search', async (req, res) => {
   res.render('search', { query, results });
 });
 
+// Stats page
+router.get('/stats', async (req, res) => {
+  const response = await fetch(`http://${process.env.HOST}:${process.env.PORT}/api/v1/stats`);
+  const stats = await response.json();
+  
+  res.render('stats', { stats });
+});
+
 // Details page
 router.get('/details/:id', async (req, res) => {
   const id = req.params.id;

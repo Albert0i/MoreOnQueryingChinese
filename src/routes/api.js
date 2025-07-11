@@ -21,6 +21,11 @@ router.get('/check', async (req, res) => {
   res.status(200).json({ success: true, count: results.length })
 })
 
+// GET /api/v1/stats
+router.get('/stats', async (req, res) => {
+  res.status(200).json(await getStatus())
+});
+
 // GET /api/v1/details?id=xxx
 router.get('/details', async (req, res) => {
   const id = parseInt(req.query.id, 10);

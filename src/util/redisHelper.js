@@ -195,9 +195,9 @@ export async function findDocuments(query, offset=0, limit = 10) {
    return { 
       version: await getVersion(),
       documents: docCount,
-      docSize: `${Number(docSize / 1024 / 1024).toFixed(2)} MB` , 
+      docSize: Number(docSize / 1024 / 1024).toFixed(2), 
       tokens: tokenCount, 
-      tokenSize: `${Number(tokenSize / 1024 / 1024).toFixed(2)} MB` , 
+      tokenSize: Number(tokenSize / 1024 / 1024).toFixed(2), 
       visited: results.length, 
       results
    };
