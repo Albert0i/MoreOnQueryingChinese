@@ -460,10 +460,34 @@ function filterProperties(data, allowedKeys) {
       arguments: tokens
    });
    
-   if ( argv.length !==0 )
-      return filterProperties(convertNestedToObjectsWithScore(result), argv)
-   else 
-      return convertNestedToObjectsWithScore(result)
+   let docs = []
+   if ( argv.length !==0 ) {
+      //return filterProperties(convertNestedToObjectsWithScore(result), argv)
+      docs = filterProperties(convertNestedToObjectsWithScore(result), argv)
+   }
+   else {
+      //return convertNestedToObjectsWithScore(result)
+      docs = convertNestedToObjectsWithScore(result)
+   }
+   // Update `visited` field
+   const promises = [];    // Collect promises 
+    docs.forEach(doc => { 
+         const docKey = getDocumentKeyName(doc.id)
+         const now = new Date(); 
+         const isoDate = now.toISOString(); 
+
+         // Use transaction
+         promises.push( 
+                        redis.multi()
+                        .hIncrBy(docKey, 'visited', 1)
+                        .hSet(docKey, 'updatedAt', isoDate)
+                        .hIncrBy(docKey, 'updateIdent', 1)
+                        .exec()
+            )
+        })
+    await Promise.all(promises); // Resolve all at once
+    
+    return docs
 }
 
 /**
