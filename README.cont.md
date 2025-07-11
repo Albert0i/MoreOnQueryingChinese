@@ -236,8 +236,8 @@ Doing this extra steps may of great help to your application...
 
 
 #### IV. Retrospection 
-- Functions `spaceChineseChars`, `mapRowsToObjects`, `parseKeyValueArrays`, `filterProperties` and `convertNestedToObjectsWithScore`  are written by AI. 
-- Most lua scripts are written by AI. 
+- Functions `spaceChineseChars`, `mapRowsToObjects`, `parseKeyValueArrays`, `filterProperties` and `convertNestedToObjectsWithScore`  are written by AI to twist the output; 
+- Most lua scripts are also written by AI. 
 
 
 #### V. Bibliography
