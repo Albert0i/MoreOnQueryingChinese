@@ -393,6 +393,9 @@ export async function zSumScore(key) {
     });
 }
 
+/*
+   Faceted Search
+*/
 export async function fsDocumentsV1(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
    const tokens = spaceChineseChars(removeStopWord(containedValue)).
                      split(' ').
