@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express';
 
-import { fsDocumentsV2 as fsDocuments, getTokenKeyName, countDocuments, getDocument } from '../util/redisHelper.js'
+import { fsDocumentsV2 as fsDocuments, getTokenKeyName, countDocuments, getDocument, getStatus } from '../util/redisHelper.js'
 
 const router = express.Router();
 
@@ -26,6 +26,11 @@ router.get('/details', async (req, res) => {
   const id = parseInt(req.query.id, 10);
 
   res.status(200).json(await getDocument(id))
+});
+
+// GET /api/v1/stats
+router.get('/stats', async (req, res) => {
+  res.status(200).json(await getStatus())
 });
 
 export default router;

@@ -188,14 +188,18 @@ export async function findDocuments(query, offset=0, limit = 10) {
  * missing index, or unexpected server responses.
  */
  export async function getStatus() { 
-   const query = '@visited:[(0 +inf]'
+   const [docCount, docSize ] = await countKeys(getDocumentKeyName(''))
+   const [tokenCount, tokenSize ] = await countKeys(getTokenKeyName(''))
+   const results = await countVisited(getDocumentKeyName(''), "visited", "0", "id", "textChi", "visited")
 
    return { 
-      version: await getVersion(),      
-      documents: await countDocuments(),
-      size: 13.1, 
-      visited: await countDocuments(query), 
-      results: await getDocuments(query, 0, process.env.MAX_STATS_RETURN)
+      version: await getVersion(),
+      documents: docCount,
+      docSize: `${Number(docSize / 1024 / 1024).toFixed(2)} MB` , 
+      tokens: tokenCount, 
+      tokenSize: `${Number(tokenSize / 1024 / 1024).toFixed(2)} MB` , 
+      visited: results.length, 
+      results
    };
  }
 
@@ -318,12 +322,16 @@ const filePathS2 = path.join('.', 'src', 'lua', 'zAddIncr.lua');
 const filePathS3 = path.join('.', 'src', 'lua', 'zSumScore.lua');
 const filePathS4v1 = path.join('.', 'src', 'lua', 'fsTextChi.v1.lua');
 const filePathS4v2 = path.join('.', 'src', 'lua', 'fsTextChi.v2.lua');
+const filePathS5 = path.join('.', 'src', 'lua', 'countKeys.lua');
+const filePathS6 = path.join('.', 'src', 'lua', 'countVisited.lua');
 
 const luaScriptS1 = fs.readFileSync(filePathS1, 'utf8');
 const luaScriptS2 = fs.readFileSync(filePathS2, 'utf8');
 const luaScriptS3 = fs.readFileSync(filePathS3, 'utf8');
 const luaScriptS4v1 = fs.readFileSync(filePathS4v1, 'utf8');
 const luaScriptS4v2 = fs.readFileSync(filePathS4v2, 'utf8');
+const luaScriptS5 = fs.readFileSync(filePathS5, 'utf8');
+const luaScriptS6 = fs.readFileSync(filePathS6, 'utf8');
 
 /**
  * Loads and registers scripts into the system or datastore.
@@ -343,6 +351,8 @@ let shaS2 = ''    // zAddIncr
 let shaS3 = ''    // zSumScore
 let shaS4v1 = ''  // fsDocuments
 let shaS4v2 = ''  // fsDocuments
+let shaS5 = ''    // countKeys
+let shaS6 = ''    // countVisited
 
 export async function loadScript() {
    shaS1 = await redis.scriptLoad(luaScriptS1);
@@ -350,8 +360,10 @@ export async function loadScript() {
    shaS3 = await redis.scriptLoad(luaScriptS3);
    shaS4v1 = await redis.scriptLoad(luaScriptS4v1);
    shaS4v2 = await redis.scriptLoad(luaScriptS4v2);
+   shaS5 = await redis.scriptLoad(luaScriptS5);
+   shaS6 = await redis.scriptLoad(luaScriptS6);
 
-   return [ shaS1, shaS2, shaS3, shaS4v1, shaS4v2 ]
+   return [ shaS1, shaS2, shaS3, shaS4v1, shaS4v2, shaS5, shaS6 ]
 }
 
 /**
@@ -391,6 +403,22 @@ export async function zSumScore(key) {
       keys: [ key ],
       arguments: [ ]
     });
+}
+
+export async function countKeys(keyPrefix) {
+   return redis.evalSha(shaS5, {
+      keys: [ `${keyPrefix}*` ],
+      arguments: [ ]
+    });    
+}
+
+export async function countVisited(keyPrefix, testField, testValue, ...argv) {
+   const result = await redis.evalSha(shaS6, {
+      keys: [ `${keyPrefix}*`, testField, testValue ],
+      arguments: argv
+    });
+    
+   return mapRowsToObjects(argv, result)
 }
 
 /*
