@@ -223,6 +223,14 @@ redis.call('EXPIRE', tempkey, tempkeyTTL)
 - Redis’s `ZINTERSTORE` has worst-case complexity of `O(N × K)` where `N` is the cardinality of the smallest set.
 - Starting with the smallest set minimizes unnecessary comparisons and speeds up intersection.
 
+This optimization seems over-fastidious and thus unnecessary in our dataset. However, as data size grows in time to ten billions, for example. The average cardinality could be humungous. 
+
+```
+10,000,000,000 ÷ 8,000 = 1,250,000
+```
+
+Doing this extra steps may of great help to your application... 
+
 
 #### III. A Crumb from [Vector Semantic Search in Chinese using MariaDB](https://github.com/Albert0i/mariadb-vss-chinese)
 
