@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>語義搜尋</title>
+  <title>Redis 中文搜尋</title>
   <link rel="stylesheet" href="/css/tailwind.css" />
 </head>
 <body class="bg-white px-4 py-12 flex flex-col items-center min-h-screen">
-  <h1 class="text-3xl font-semibold text-gray-800 mb-8">語義搜尋</h1>
+  <h1 class="text-3xl font-semibold text-gray-800 mb-8">Redis 中文搜尋</h1>
 
   <form method="POST" action="/search" class="w-full max-w-md space-y-4">
     <input name="query" value="<%= query %>" placeholder="輸入搜尋詞…" class="w-full border rounded px-4 py-2" autofocus required  maxlength="512"/>
@@ -21,7 +21,7 @@
           <p class="text-gray-800 text-base mb-1">💬 <%= item.textChi %></p>
           <p class="text-sm text-gray-500">
             🆔 <a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a> |
-            距離: <%= item.distance.toFixed(5) %>
+            分數: <%= item.score.toFixed(0) %>
           </p>
         </div>
       <% }); %>
