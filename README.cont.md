@@ -7,7 +7,7 @@
 
 
 #### I. And the missing score...?!
-To get the score, we have to delve into greater details into the world of Sorted Set. To find out which sentences contain the phrase "世界", we may use: 
+To work out the score, we have to delve into greater details into the world of Sorted Set. To find out which sentences contain the phrase "世界", we may use: 
 
 ```
 > ZINTER 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界" AGGREGATE MIN WITHSCORES
@@ -111,10 +111,39 @@ export async function fsDocuments(documentPrefix, testField, containedValue, off
       arguments: tokens
    });
    
-   if ( argv.length !==0 )
-      return filterProperties(convertNestedToObjectsWithScore(result), argv)
-   else 
-      return convertNestedToObjectsWithScore(result)
+   let docs = []
+   // HMGET returns array of [value1, vaue2,...] , without field name.
+   // HGETALL returns array of [key1, value1, key2, value2... ].
+   if ( argv.length !==0 ) {
+      // Filter out unwanted properties. 
+      docs = filterProperties(convertNestedToObjectsWithScore(result), argv)
+   }
+   else {
+      docs = convertNestedToObjectsWithScore(result)
+   }
+   // Update `visited` field
+   const promises = [];    // Collect promises 
+   docs.forEach(doc => { 
+         const docKey = getDocumentKeyName(doc.id)
+         const now = new Date(); 
+         const isoDate = now.toISOString(); 
+
+         // Use transaction to update document
+         promises.push( 
+                        redis.multi()
+                        .hIncrBy(docKey, 'visited', 1)
+                        .hSet(docKey, 'updatedAt', isoDate)
+                        .hIncrBy(docKey, 'updateIdent', 1)
+                        .exec()
+            )
+         // Do misc housekeeping 
+         promises.push(
+            zAddIncr( getVisitedKeyName(), docKey )
+         )
+        })
+   await Promise.all(promises); // Resolve all at once
+   
+   return docs
 }
 ```
 
@@ -137,26 +166,41 @@ local index = 1     -- index to place retrieved value
 
 local tempkey = 'temp:'..KEYS[2]  -- destination key
 local tempkeyTTL = 30             -- delete after n seconds 
-local args = {}
 
--- Prepare parameters for "ZINTERSTORE"
-table.insert(args, tempkey)       -- destination key
-table.insert(args, #ARGV)         -- number of source keys
+-- Step 1: Collect cardinalities
+local sets = {}
 for i = 1, #ARGV do
-  table.insert(args, ARGV[i])     -- source keys
+  local key = ARGV[i]
+  local count = redis.call('ZCARD', key)
+  table.insert(sets, { key = key, count = count })
 end
 
--- Optional: aggregation and scores
+-- Step 2: Sort by cardinality (ascending)
+table.sort(sets, function(a, b)
+  return a.count < b.count
+end)
+
+-- Step 3: Build args for ZINTERSTORE
+local args = {}
+table.insert(args, tempkey)         -- destination key
+table.insert(args, #sets)           -- number of source keys
+
+for i = 1, #sets do
+  table.insert(args, sets[i].key)   -- sorted source keys
+end
+
+-- Step 4: Add aggregation method
 table.insert(args, 'AGGREGATE')
 table.insert(args, 'MIN')
 
+-- Step 5: Execute and expire
 local n = redis.call('ZINTERSTORE', unpack(args))
-redis.call('EXPIRE', tempkey, tempkeyTTL)   -- delete after n seconds 
+redis.call('EXPIRE', tempkey, tempkeyTTL)
 
 -- If intersect is not empty 
 if ( n > 0 ) then 
-  -- ZREVRANGEBYSCORE "fts:chinese:tokens:世界" +inf -inf WITHSCOREs LIMIT 0 10
-  local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES', 'LIMIT', offset, limit)
+  -- ZREVRANGEBYSCORE "temp:世界" +inf -inf WITHSCORES
+  local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES')
   -- Example result: { "userA", "42", "userB", "37", "userC", "29" }
   for i = 1, #z, 2 do
     local key = z[i]
@@ -166,12 +210,25 @@ if ( n > 0 ) then
     local text = redis.call("HGET", key, KEYS[1])
 
     -- If found and contains the value
-    if (text) and (string.find(text, KEYS[2])) then     
-      matched[index] = { redis.call("HGETALL", key), score }
-      
-      -- Increase the index
-      index = index + 1
-    end
+    if (text) and (string.find(text, KEYS[2])) then 
+      -- Skip offset 
+      if offset > 0 then 
+        offset = offset - 1
+      else 
+        -- Take limit 
+        if limit > 0 then 
+          matched[index] = { redis.call("HGETALL", key), score }
+
+          -- Increase the index 
+          index = index + 1
+          -- Decrease the limit
+          limit = limit - 1
+        else 
+          -- Readhed limit before scan completed
+          return matched
+        end 
+      end 
+    end 
   end
 end
 
@@ -256,6 +313,8 @@ Have fun!
 
 #### V. Bibliography
 1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
+2. [Scripting with Lua](https://redis.io/docs/latest/develop/programmability/eval-intro/)
+3. [Redis Lua API reference](https://redis.io/docs/latest/develop/programmability/lua-api/)
 
 
 #### Epilogue 

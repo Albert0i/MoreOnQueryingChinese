@@ -218,21 +218,24 @@ export async function getDocument(id) {
    * @returns {Promise<{ redisVersion: string, luaVersion: string }>} An object containing Redis and Lua version.
    */
   export async function getRedisVersions() {
-    const info = await redis.info('server');
-    const versionLine = info
-      .split('\n')
-      .find(line => line.startsWith('redis_version'));
-  
-    const redisVersion = versionLine?.split(':')[1]?.trim() || 'Unknown';
-  
+    const redisVersion = await redis.eval("return redis.REDIS_VERSION");
+    const libs = await redis.eval(`
+                                    local libs = {}
+                                    for k, v in pairs(_G) do
+                                    table.insert(libs, k)
+                                    end
+                                    return libs`
+                                 )
+    
     let luaVersion = 'Unknown';
     if (redisVersion !== 'Unknown') {
       const [major, minor] = redisVersion.split('.').map(Number);
+      
       // Redis 2.6.13+ uses Lua 5.1.5; older versions use Lua 5.1.4
       luaVersion = (major > 2 || (major === 2 && minor >= 13)) ? '5.1.5' : '5.1.4';
     }
   
-    return { redisVersion, luaVersion };
+    return { redisVersion, luaVersion, libs };
   }
 
 /*
