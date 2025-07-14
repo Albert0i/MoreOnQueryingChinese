@@ -120,14 +120,6 @@ export async function getVisitedDocuments(zKey, offset, limit, ...argv) {
   else 
       return parseKeyValueArrays(result)
 }
-// export async function countVisited(keyPrefix, testField, testValue, ...argv) {
-//    const result = await redis.evalSha(shaS6, {
-//       keys: [ `${keyPrefix}*`, testField, testValue ],
-//       arguments: argv
-//     });
-    
-//    return mapRowsToObjects(argv, result)
-// }
 
 /*
    Faceted Search on documents 
