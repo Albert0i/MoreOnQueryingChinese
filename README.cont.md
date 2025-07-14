@@ -166,41 +166,26 @@ local index = 1     -- index to place retrieved value
 
 local tempkey = 'temp:'..KEYS[2]  -- destination key
 local tempkeyTTL = 30             -- delete after n seconds 
-
--- Step 1: Collect cardinalities
-local sets = {}
-for i = 1, #ARGV do
-  local key = ARGV[i]
-  local count = redis.call('ZCARD', key)
-  table.insert(sets, { key = key, count = count })
-end
-
--- Step 2: Sort by cardinality (ascending)
-table.sort(sets, function(a, b)
-  return a.count < b.count
-end)
-
--- Step 3: Build args for ZINTERSTORE
 local args = {}
-table.insert(args, tempkey)         -- destination key
-table.insert(args, #sets)           -- number of source keys
 
-for i = 1, #sets do
-  table.insert(args, sets[i].key)   -- sorted source keys
+-- Prepare parameters for "ZINTERSTORE"
+table.insert(args, tempkey)       -- destination key
+table.insert(args, #ARGV)         -- number of source keys
+for i = 1, #ARGV do
+  table.insert(args, ARGV[i])     -- source keys
 end
 
--- Step 4: Add aggregation method
+-- Optional: aggregation and scores
 table.insert(args, 'AGGREGATE')
 table.insert(args, 'MIN')
 
--- Step 5: Execute and expire
 local n = redis.call('ZINTERSTORE', unpack(args))
-redis.call('EXPIRE', tempkey, tempkeyTTL)
+redis.call('EXPIRE', tempkey, tempkeyTTL)   -- delete after n seconds 
 
 -- If intersect is not empty 
 if ( n > 0 ) then 
-  -- ZREVRANGEBYSCORE "temp:世界" +inf -inf WITHSCORES
-  local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES')
+  -- ZREVRANGEBYSCORE "fts:chinese:tokens:世界" +inf -inf WITHSCOREs LIMIT 0 10
+  local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES', 'LIMIT', offset, limit)
   -- Example result: { "userA", "42", "userB", "37", "userC", "29" }
   for i = 1, #z, 2 do
     local key = z[i]
@@ -210,25 +195,12 @@ if ( n > 0 ) then
     local text = redis.call("HGET", key, KEYS[1])
 
     -- If found and contains the value
-    if (text) and (string.find(text, KEYS[2])) then 
-      -- Skip offset 
-      if offset > 0 then 
-        offset = offset - 1
-      else 
-        -- Take limit 
-        if limit > 0 then 
-          matched[index] = { redis.call("HGETALL", key), score }
-
-          -- Increase the index 
-          index = index + 1
-          -- Decrease the limit
-          limit = limit - 1
-        else 
-          -- Readhed limit before scan completed
-          return matched
-        end 
-      end 
-    end 
+    if (text) and (string.find(text, KEYS[2])) then     
+      matched[index] = { redis.call("HGETALL", key), score }
+      
+      -- Increase the index
+      index = index + 1
+    end
   end
 end
 
@@ -240,7 +212,7 @@ The protagonist here in lua script is [ZINTERSTORE](https://redis.io/docs/latest
 
 For sake of simplicity, this script returns everything in a `HASH` with `HGETALL`, and thus further use of `filterProperties` is required to wipe off unnecessary things. 
 
-To optimize your [ZINTERSTORE](https://redis.io/docs/latest/commands/zinterstore/) operation by ordering the input sets from **lowest to highest cardinality**, you can enhance your script like this:
+To optimize our [ZINTERSTORE](https://redis.io/docs/latest/commands/zinterstore/) operation by ordering the input sets from **lowest to highest cardinality**, you can enhance the script like this:
 
 ```lua
 local tempkey = 'temp:' .. KEYS[2]  -- destination key
@@ -315,15 +287,11 @@ Have fun!
 1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
 2. [Scripting with Lua](https://redis.io/docs/latest/develop/programmability/eval-intro/)
 3. [Redis Lua API reference](https://redis.io/docs/latest/develop/programmability/lua-api/)
+4. [Redis functions](https://redis.io/docs/latest/develop/programmability/functions-intro/)
+5. [The Castle by Franz Kafka](https://files.libcom.org/files/Franz%20Kafka-The%20Castle%20(Oxford%20World's%20Classics)%20(2009).pdf)
 
 
 #### Epilogue 
 
 
 ### EOF (2025/07/18)
-```
-ZINTER 3 "fts:chinese:tokens:韓" "fts:chinese:tokens:非" "fts:chinese:tokens:子" AGGREGATE MIN WITHSCORES
-```
-
-peculiarity and semantic ambiguity. 
-scrape crumb from previous project.
