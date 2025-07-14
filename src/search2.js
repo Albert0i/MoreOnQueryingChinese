@@ -8,7 +8,7 @@ await redis.connect();
 await loadScript();
 
 //const result = await scanDocuments("fts:chinese:documents:*", "textChi", "韓非") 
-const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非子", 0, 10, "id", "textChi") 
+const result = await scanDocuments("fts:chinese:documents:", "textChi", "黑夜", 0, 10, "id", "textChi") 
 
 console.log(result)
 console.log(result.length)

@@ -19,7 +19,7 @@ local matched = {}  -- result to be returned
 local index = 1     -- index to place retrieved value
 
 local tempkey = 'temp:'..KEYS[2]  -- destination key
-local tempkeyTTL = 30             -- delete after n seconds 
+local tempkeyTTL = 300             -- delete after n seconds 
 
 -- Step 1: Collect cardinalities
 local sets = {}
@@ -53,8 +53,8 @@ redis.call('EXPIRE', tempkey, tempkeyTTL)
 
 -- If intersect is not empty 
 if ( n > 0 ) then 
-  -- ZREVRANGEBYSCORE "fts:chinese:tokens:世界" +inf -inf WITHSCOREs LIMIT 0 10
-  local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES', 'LIMIT', offset, limit)
+  -- ZREVRANGEBYSCORE "temp:世界" +inf -inf WITHSCORES
+  local z = redis.call('ZREVRANGEBYSCORE', tempkey, '+inf', '-inf', 'WITHSCORES')
   -- Example result: { "userA", "42", "userB", "37", "userC", "29" }
   for i = 1, #z, 2 do
     local key = z[i]

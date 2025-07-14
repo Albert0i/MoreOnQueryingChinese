@@ -32,7 +32,7 @@ export async function scanTextChi(pattern) {
    main
 */
 await redis.connect();
-const result = await scanTextChi('韓非子')
+const result = await scanTextChi('黑夜')
 
 console.log(result)
 console.log(result.length)

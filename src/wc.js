@@ -37,6 +37,7 @@ export async function wc() {
 */
 await redis.connect();
 await loadScript();
+await redis.del(getWceyName())
 
 await wc()
 

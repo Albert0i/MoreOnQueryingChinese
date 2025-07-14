@@ -158,7 +158,7 @@ export async function fsDocumentsV2(documentPrefix, testField, containedValue, o
    }
    // Update `visited` field
    const promises = [];    // Collect promises 
-    docs.forEach(doc => { 
+   docs.forEach(doc => { 
          const docKey = getDocumentKeyName(doc.id)
          const now = new Date(); 
          const isoDate = now.toISOString(); 
@@ -176,9 +176,9 @@ export async function fsDocumentsV2(documentPrefix, testField, containedValue, o
             zAddIncr( getVisitedKeyName(), docKey )
          )
         })
-    await Promise.all(promises); // Resolve all at once
-
-    return docs
+   await Promise.all(promises); // Resolve all at once
+   
+   return docs
 }
 
 /*
@@ -205,6 +205,18 @@ export async function getDocument(id) {
     };
   }
 
+  export async function getVersion() {
+   const serverInfo = await redis.sendCommand(['INFO', 'SERVER']);
+
+   const parsed = Object.fromEntries(
+      serverInfo
+        .split('\n')
+        .filter(line => line && !line.startsWith('#'))
+        .map(line => line.split(':'))
+    );
+    
+    return `Redis ${parsed.redis_version}`; // e.g., "7.2.0" 
+ }  
 /*
    Twisting utilities 
 
