@@ -107,7 +107,7 @@ export async function countKeys(keyPrefix) {
     });    
 }
 
-export async function getVisitedDocuments(zKey, offset, limit, ...argv) {
+export async function getVisitedDocuments(zKey, offset = 0, limit = 10, ...argv) {
    const result = await redis.evalSha(shaS6, {
       keys: [ zKey, offset.toString(), limit.toString()],
       arguments: ( argv.length !== 0 ? argv : ["*"] )
