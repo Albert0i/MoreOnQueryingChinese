@@ -34,7 +34,7 @@ You can control how scores are combined using the `AGGREGATE` option:
 | `MIN` | Takes the lowest score | `min(2, 3) = 2` |
 | `MAX` | Takes the highest score | `max(2, 3) = 3` |
 
-Here `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggregation and also give back the score. As you can see, we found 121 matched sentences here. Then we have to return the sorted result by score in descending order. To do that, we have to store the intermediate result using [ZINTERSTORE](ZINTERSTORE) first in a temporary key, then sort it using [ZREVRANGEBYSCORE](https://redis.io/docs/latest/commands/zrevrangebyscore/) like so: 
+Aforementioned `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggregation and also give back the score. As you can see, we found 121 matched sentences here. Then we have to sort by the score in descending order and return. To do that, we have to store the intermediate result using [ZINTERSTORE](ZINTERSTORE) in a temporary key, sort it using [ZREVRANGEBYSCORE](https://redis.io/docs/latest/commands/zrevrangebyscore/) like so: 
 
 ```
 > ZINTERSTORE "temp:世界" 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界" AGGREGATE MIN 
@@ -83,7 +83,7 @@ HGET "fts:chinese:documents:991" textChi
 
 > 探索<b>世界</b>的美妙之處
 
-Lastly, to remove the temporary key "temp:世界".
+Sentence with highest score stays on top. The last thing to do is to remove the temporary key "temp:世界", which is done using a unique feature in Redis -- [TTL](https://redis.io/docs/latest/commands/ttl/) and [EXPIRE](https://redis.io/docs/latest/commands/expire/).
 
 
 #### II. The final code and it's optimization
@@ -279,8 +279,8 @@ Have fun!
 
 
 #### IV. Retrospection 
-- Functions `spaceChineseChars`, `mapRowsToObjects`, `parseKeyValueArrays`, `filterProperties` and `convertNestedToObjectsWithScore`  are written by AI to twist the output; 
-- Most lua scripts are also written by AI. 
+- Functions `spaceChineseChars`, `mapRowsToObjects`, `parseKeyValueArrays`, `filterProperties` and `convertNestedToObjectsWithScore`  are written by HIM to twist the output; 
+- Most lua scripts are also written by HIM. 
 
 
 #### V. Bibliography
