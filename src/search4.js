@@ -8,7 +8,7 @@ await redis.connect();
 await loadScript();
 
 //const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界") 
-const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界", 0, 10, "id", "textChi", "score") 
+const result = await fsDocuments("fts:chinese:tokens:", "textChi", "黑夜", 0, 10, "id", "textChi", "score") 
 
 console.log(result)
 console.log(result.length)

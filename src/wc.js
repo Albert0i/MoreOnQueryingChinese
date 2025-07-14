@@ -1,5 +1,5 @@
 import { redis } from './redis/redis.js'
-import { loadScript, zSumScore, getWceyName } from './util/redisHelper.js'
+import { loadScript, zSumScore, getWceyName, getTokenKeyName } from './util/redisHelper.js'
 
 export async function wc() {
   let counter = 0; 
@@ -9,7 +9,7 @@ export async function wc() {
 
   do {
     const result = await redis.scan(cursor, {
-      MATCH: 'fts:chinese:tokens:*',
+      MATCH: getTokenKeyName('*'),
       COUNT: 100, // adjust batch size as needed
     });
 

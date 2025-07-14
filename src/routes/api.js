@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express';
 
-import { fsDocumentsV2 as fsDocuments, getTokenKeyName, countDocuments, getDocument, getStatus } from '../util/redisHelper.js'
+import { fsDocumentsV2 as fsDocuments, getTokenKeyName, getDocument, getStatus } from '../util/redisHelper.js'
 
 const router = express.Router();
 
@@ -16,8 +16,8 @@ router.post('/search', async (req, res) => {
 // GET /api/v1/check
 router.get('/check', async (req, res) => {  
   const { query } = req.query
-  const results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, process.env.MAX_FIND_RETURN, "id", "textChi", "score") 
-  
+  const results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, 9999, "id", "textChi", "score") 
+
   res.status(200).json({ success: true, count: results.length })
 })
 
@@ -31,11 +31,6 @@ router.get('/details', async (req, res) => {
   const id = parseInt(req.query.id, 10);
 
   res.status(200).json(await getDocument(id))
-});
-
-// GET /api/v1/stats
-router.get('/stats', async (req, res) => {
-  res.status(200).json(await getStatus())
 });
 
 export default router;
