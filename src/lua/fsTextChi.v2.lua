@@ -19,7 +19,7 @@ local matched = {}  -- result to be returned
 local index = 1     -- index to place retrieved value
 
 local tempkey = 'temp:'..KEYS[2]  -- destination key
-local tempkeyTTL = 300             -- delete after n seconds 
+local tempkeyTTL = 30             -- delete after n seconds 
 
 -- Step 1: Collect cardinalities
 local sets = {}

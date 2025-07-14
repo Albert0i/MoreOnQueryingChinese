@@ -39,7 +39,7 @@ const filePathS3 = path.join('.', 'src', 'lua', 'zSumScore.lua');
 const filePathS4v1 = path.join('.', 'src', 'lua', 'fsTextChi.v1.lua');
 const filePathS4v2 = path.join('.', 'src', 'lua', 'fsTextChi.v2.lua');
 const filePathS5 = path.join('.', 'src', 'lua', 'countKeys.lua');
-const filePathS6 = path.join('.', 'src', 'lua', 'countVisited.lua');
+const filePathS6 = path.join('.', 'src', 'lua', 'getVisitedDocs.lua');
 
 const luaScriptS1 = fs.readFileSync(filePathS1, 'utf8');
 const luaScriptS2 = fs.readFileSync(filePathS2, 'utf8');
@@ -107,14 +107,27 @@ export async function countKeys(keyPrefix) {
     });    
 }
 
-export async function countVisited(keyPrefix, testField, testValue, ...argv) {
+export async function getVisitedDocuments(zKey, offset, limit, ...argv) {
    const result = await redis.evalSha(shaS6, {
-      keys: [ `${keyPrefix}*`, testField, testValue ],
-      arguments: argv
+      keys: [ zKey, offset.toString(), limit.toString()],
+      arguments: ( argv.length !== 0 ? argv : ["*"] )
     });
-    
-   return mapRowsToObjects(argv, result)
+
+    // HMGET returns array of [value1, vaue2,...] , without field name.
+    // HGETALL returns array of [key1, value1, key2, value2... ].
+    if ( argv.length !==0 )
+      return mapRowsToObjects(argv, result)
+  else 
+      return parseKeyValueArrays(result)
 }
+// export async function countVisited(keyPrefix, testField, testValue, ...argv) {
+//    const result = await redis.evalSha(shaS6, {
+//       keys: [ `${keyPrefix}*`, testField, testValue ],
+//       arguments: argv
+//     });
+    
+//    return mapRowsToObjects(argv, result)
+// }
 
 /*
    Faceted Search on documents 
@@ -193,8 +206,8 @@ export async function getDocument(id) {
     const { redisVersion, luaVersion } = await getRedisVersions()
     const [docCount, docSize ] = await countKeys(getDocumentKeyName(''))
     const [tokenCount, tokenSize ] = await countKeys(getTokenKeyName(''))
-    const results = await countVisited(getDocumentKeyName(''), "visited", "0", "id", "textChi", "visited")
- 
+    const results = await getVisitedDocuments(getVisitedKeyName(), 0, process.env.MAX_STATS_RETURN)
+    
     return { 
        version: redisVersion,
        lua: luaVersion, 
@@ -212,7 +225,7 @@ export async function getDocument(id) {
    *
    * @returns {Promise<{ redisVersion: string, luaVersion: string }>} An object containing Redis and Lua version.
    */
-  async function getRedisVersions() {
+  export async function getRedisVersions() {
     const info = await redis.info('server');
     const versionLine = info
       .split('\n')
