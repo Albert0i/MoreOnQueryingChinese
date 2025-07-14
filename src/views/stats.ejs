@@ -11,7 +11,8 @@
   
   <% if (stats) { %>
     <div id="meta" class="text-lg text-gray-600 mb-2 space-y-1">
-      <p>📕 資料庫版本：<strong><%= stats.version %></strong></p>      
+      <p>📕 Redis 版本 ：<strong><%= stats.version %></strong></p>      
+      <p>🔧 Lua 版本　：<strong><%= stats.lua %></strong></p>      
       <p>📄 全部文件數：<strong><%= stats.documents %></strong></p>
       <p>📄 文件總容量：<strong><%= stats.docSize %> MB</strong></p>
       <p>📄 全部字元數：<strong><%= stats.tokens %></strong></p>

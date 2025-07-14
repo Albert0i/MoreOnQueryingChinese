@@ -64,25 +64,12 @@ if ( n > 0 ) then
     local text = redis.call("HGET", key, KEYS[1])
 
     -- If found and contains the value
-    if (text) and (string.find(text, KEYS[2])) then 
-      -- Skip offset 
-      if offset > 0 then 
-        offset = offset - 1
-      else 
-        -- Take limit 
-        if limit > 0 then 
-          matched[index] = { redis.call("HGETALL", key), score }
-
-          -- Increase the index 
-          index = index + 1
-          -- Decrease the limit
-          limit = limit - 1
-        else 
-          -- Readhed limit before scan completed
-          return matched
-        end 
-      end 
-    end 
+    if (text) and (string.find(text, KEYS[2])) then     
+      matched[index] = { redis.call("HGETALL", key), score }
+      
+      -- Increase the index
+      index = index + 1
+    end
   end
 end
 

@@ -190,12 +190,14 @@ export async function getDocument(id) {
  }
 
  export async function getStatus() { 
+    const { redisVersion, luaVersion } = await getRedisVersions()
     const [docCount, docSize ] = await countKeys(getDocumentKeyName(''))
     const [tokenCount, tokenSize ] = await countKeys(getTokenKeyName(''))
     const results = await countVisited(getDocumentKeyName(''), "visited", "0", "id", "textChi", "visited")
  
     return { 
-       version: await getVersion(),
+       version: redisVersion,
+       lua: luaVersion, 
        documents: docCount,
        docSize: Number(docSize / 1024 / 1024).toFixed(2), 
        tokens: tokenCount, 
@@ -205,18 +207,29 @@ export async function getDocument(id) {
     };
   }
 
-  export async function getVersion() {
-   const serverInfo = await redis.sendCommand(['INFO', 'SERVER']);
+  /**
+   * Retrieves the Redis server version and infers the embedded Lua interpreter version.
+   *
+   * @returns {Promise<{ redisVersion: string, luaVersion: string }>} An object containing Redis and Lua version.
+   */
+  async function getRedisVersions() {
+    const info = await redis.info('server');
+    const versionLine = info
+      .split('\n')
+      .find(line => line.startsWith('redis_version'));
+  
+    const redisVersion = versionLine?.split(':')[1]?.trim() || 'Unknown';
+  
+    let luaVersion = 'Unknown';
+    if (redisVersion !== 'Unknown') {
+      const [major, minor] = redisVersion.split('.').map(Number);
+      // Redis 2.6.13+ uses Lua 5.1.5; older versions use Lua 5.1.4
+      luaVersion = (major > 2 || (major === 2 && minor >= 13)) ? '5.1.5' : '5.1.4';
+    }
+  
+    return { redisVersion, luaVersion };
+  }
 
-   const parsed = Object.fromEntries(
-      serverInfo
-        .split('\n')
-        .filter(line => line && !line.startsWith('#'))
-        .map(line => line.split(':'))
-    );
-    
-    return `Redis ${parsed.redis_version}`; // e.g., "7.2.0" 
- }  
 /*
    Twisting utilities 
 
