@@ -23,7 +23,9 @@
     <div id="results" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full max-w-6xl mt-2 px-2">
       <% stats.results.forEach(item => { %>
         <div class="bg-gray-100 rounded p-4 shadow text-left">
-          <p class="text-gray-800 text-base mb-1">💬 <%= item.textChi %></p>
+          <p class="text-gray-800 text-base mb-1">
+            💬 <%= item.textChi.length > 80 ? item.textChi.slice(0, 80) + '...' : item.textChi %>
+          </p>
           <p class="text-sm text-gray-500">
             🆔<a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a>
             | 👁️‍🗨️ Visited: <%= item.visited %>
