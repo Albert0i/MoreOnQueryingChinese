@@ -30,7 +30,8 @@ const wordsToRemove = [
     "《",    // 書名號 (Title Marks)
     "》",    // 書名號 (Title Marks)
     "·",     // 間隔號 (Interpunct)
-    "…"      // 省略號 (Ellipsis)
+    "…",      // 省略號 (Ellipsis)
+    "<br />"
 ]
 
 /*
@@ -44,4 +45,8 @@ export function spaceChineseChars(text) {
     const tokens = text.match(pattern);
     return tokens ? tokens.join(' ') : '';
 }
- 
+
+export function isNumeric (token) { 
+    return typeof token === 'string' && 
+                  token.trim() !== '' && !isNaN(Number(token));
+}

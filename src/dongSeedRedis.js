@@ -2,7 +2,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { redis } from './redis/redis.js';
 import { getDocumentKeyName, getTokenKeyName, zAddIncr, loadScript } from './util/redisHelper.js'
-import { removeStopWord, spaceChineseChars } from './util/stopWords.js'
+import { removeStopWord, spaceChineseChars, isNumeric } from './util/stopWords.js'
 
 /*
    main
@@ -41,8 +41,13 @@ for await (const line of rl) {
     const textChi = `${key.replace('DONGDICT:', '')}<br />${value}`
     try {
         //console.log(`✅ HSET ${key} ${field} "${value}"`);
+        if (isNumeric(key)) {
+          continue
+        }
+        
         promises.push(redis.hSet(getDocumentKeyName(i + 1), {
                 id: i + 1, 
+                key: key.replace('DONGDICT:'),
                 textChi,
                 visited:   0, 
                 createdAt: isoDate, 
