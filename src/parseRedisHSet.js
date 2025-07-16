@@ -1,5 +1,8 @@
 import { redis } from './redis/redis.js'
 import { readFile } from 'fs/promises';
+import { getDocumentKeyName, getTokenKeyName, zAddIncr, loadScript } from './util/redisHelper.js'
+import { removeStopWord, spaceChineseChars } from './util/stopWords.js'
+
 
 async function parseHSetFile(filePath) {
   const text = await readFile(filePath, 'utf8');
@@ -25,14 +28,31 @@ async function parseHSetFile(filePath) {
 /*
    main
 */
+let promises = [];
+let i = 0
 await redis.connect();
 
-const results = await parseHSetFile('./data/output.redis');
+const results = await parseHSetFile('./data/output10.redis');
 results.forEach( result => {
     //console.log(result)
-    console.log(`"${result.key.replace('DONGDICT:', '')} <br /> ${result.description}", `)
+    //console.log(`${result.key.replace('DONGDICT:', '')} <br /> ${result.description}, `)
+    //console.log()
+    const textChi = `${result.key.replace('DONGDICT:', '')} <br /> ${result.description} `
+    const now = new Date(); 
+    const isoDate = now.toISOString(); 
+    
+    promises.push(redis.hSet(getDocumentKeyName(i + 1), {
+        id: i + 1, 
+        textChi: textChi,
+        visited:   0, 
+        createdAt: isoDate, 
+        updatedAt: "", 
+        updateIdent: 0
+    } ) )
 })
-console.log(results.length)
+
+await Promise.all(promises)
+console.log('Seeding finished!', results.length)
 
 await redis.close()
 process.exit()
