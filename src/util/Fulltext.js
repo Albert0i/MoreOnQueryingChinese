@@ -112,11 +112,14 @@ export async function createIndex() {
       }
     );
 }
-// export async function createIndex() {
-//    const redisCommand = `FT.CREATE ${getIndexName()} ON HASH PREFIX 1 ${getDocumentKeyName('')} LANGUAGE chinese SCHEMA id NUMERIC SORTABLE textChi TEXT WEIGHT 1.0 SORTABLE visited NUMERIC SORTABLE createdAt TAG SORTABLE updatedAt TAG SORTABLE updateIdent NUMERIC SORTABLE`
 
-//    return await redis.sendCommand(redisCommand.split(' '))
-// }
+/*
+export async function createIndex() {
+   const redisCommand = `FT.CREATE ${getIndexName()} ON HASH PREFIX 1 ${getDocumentKeyName('')} LANGUAGE chinese SCHEMA id NUMERIC SORTABLE textChi TEXT WEIGHT 1.0 SORTABLE visited NUMERIC SORTABLE createdAt TAG SORTABLE updatedAt TAG SORTABLE updateIdent NUMERIC SORTABLE`
+
+   return await redis.sendCommand(redisCommand.split(' '))
+}
+*/
 
 /*
    Fulltext Search 
