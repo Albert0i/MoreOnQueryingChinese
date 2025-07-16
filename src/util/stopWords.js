@@ -50,3 +50,7 @@ export function isNumeric (token) {
     return typeof token === 'string' && 
                   token.trim() !== '' && !isNaN(Number(token));
 }
+
+export function isEnglishOrSymbol (token) {
+    return /[A-Za-z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(token);
+} 

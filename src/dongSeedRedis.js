@@ -2,7 +2,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { redis } from './redis/redis.js';
 import { getDocumentKeyName, getTokenKeyName, zAddIncr, loadScript } from './util/redisHelper.js'
-import { removeStopWord, spaceChineseChars, isNumeric } from './util/stopWords.js'
+import { removeStopWord, spaceChineseChars, isNumeric, isEnglishOrSymbol } from './util/stopWords.js'
 
 /*
    main
@@ -40,25 +40,22 @@ for await (const line of rl) {
     const value = valueParts.join(' ').replace(/^"|"$/g, '');
     const textChi = `${key.replace('DONGDICT:', '')}<br />${value}`
     try {
-        //console.log(`✅ HSET ${key} ${field} "${value}"`);
-        if (isNumeric(key)) {
-          continue
-        }
-        
+        //console.log(`✅ HSET ${key} ${field} "${value}"`);        
         promises.push(redis.hSet(getDocumentKeyName(i + 1), {
                 id: i + 1, 
-                key: key.replace('DONGDICT:'),
+                key: key.replace('DONGDICT:', ''),
                 textChi,
                 visited:   0, 
                 createdAt: isoDate, 
                 updatedAt: "", 
                 updateIdent: 0
-            } ) )
-            
+            } ) )    
         // Sorted Set 
         const textChiSpc = spaceChineseChars(removeStopWord(textChi))
         textChiSpc.split(' ').map(token => {
-            if (token) {
+            if (token && 
+                !(isNumeric(token)) && 
+                !isEnglishOrSymbol(token)) {
                 promises.push(zAddIncr(
                     getTokenKeyName(token),
                     getDocumentKeyName(i + 1)
@@ -74,6 +71,9 @@ for await (const line of rl) {
 
   await Promise.all(promises)
   i = i + 1
+
+  if ((i/1000) === (Math.floor(i/1000))) 
+    console.log(i)
 }
 console.log('✅ Done processing file line by line');
 
