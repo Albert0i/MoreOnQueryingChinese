@@ -12,6 +12,11 @@
   <form method="POST" action="/search" class="w-full max-w-md space-y-4">
     <input name="query" id="query" value="<%= query %>" placeholder="輸入搜尋詞…" class="w-full border rounded px-4 py-2" autofocus required  maxlength="512"/>
 
+    <div class="flex items-center space-x-2">
+      <input type="checkbox" id="fullMode" name="fullMode" class="h-4 w-4 text-blue-500" <%= fullMode ? 'checked' : '' %> />
+      <label for="fullMode" class="text-black text-sm">全文模式</label>
+    </div>
+
     <div id="result-hint" class="text-sm text-gray-800 mt-2"></div>
     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">提交</button>
   </form>
