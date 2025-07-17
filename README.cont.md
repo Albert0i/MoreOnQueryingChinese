@@ -1,7 +1,7 @@
 ### More On Querying Chinese (cont.)
 
 > [不問蒼生問 AI。](https://fanti.dugushici.com/mingju/14821#google_vignette)
-
+> High tech hi 嘢, low tech 撈嘢。
 
 #### Prologue 
 

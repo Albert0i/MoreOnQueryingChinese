@@ -2,7 +2,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { redis } from './redis/redis.js';
 import { getDocumentKeyName, getTokenKeyName, zAddIncr, loadScript } from './util/redisHelper.js'
-import { removeStopWord, spaceChineseChars, isNumeric, isEnglishOrSymbol } from './util/stopWords.js'
+import { removeStopWord, spaceChineseChars, isNumeric, isEnglishOrSymbol, trimEdgeQuotes } from './util/stopWords.js'
 
 /*
    main
@@ -36,14 +36,18 @@ for await (const line of rl) {
   */
   // HASH
   if (parts.length >= 4 && parts[0] === 'HSET') {
-    const [, key, field, ...valueParts] = parts;
-    const value = valueParts.join(' ').replace(/^"|"$/g, '');
-    const textChi = `${key.replace('DONGDICT:', '')}<br />${value}`
+    let [, key, field, ...valueParts] = parts;
+    let value = valueParts.join(' ').replace(/^"|"$/g, '');
+
+    key = trimEdgeQuotes(key.replace('DONGDICT:', ''))
+    value = trimEdgeQuotes(value)
+
+    const textChi = `${key}<br />${value}`
     try {
         //console.log(`✅ HSET ${key} ${field} "${value}"`);        
         promises.push(redis.hSet(getDocumentKeyName(i + 1), {
                 id: i + 1, 
-                key: key.replace('DONGDICT:', ''),
+                key,
                 textChi,
                 visited:   0, 
                 createdAt: isoDate, 
@@ -75,7 +79,7 @@ for await (const line of rl) {
   if ((i/1000) === (Math.floor(i/1000))) 
     console.log(i)
 }
-console.log('✅ Done processing file line by line');
+console.log(`✅ Done processing file, ${i} lines`);
 
 // Clean up
 await redis.close();
