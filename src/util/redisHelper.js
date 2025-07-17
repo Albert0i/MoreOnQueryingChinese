@@ -78,12 +78,15 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
             arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
 
-    // HMGET returns array of [value1, vaue2,...] , without field name.
-    // HGETALL returns array of [key1, value1, key2, value2... ].
-    if ( argv.length !==0 )
-        return mapRowsToObjects(argv, result)
-    else 
-        return parseKeyValueArrays(result)
+   let docs = []
+   // HMGET returns array of [value1, vaue2,...] , without field name.
+   // HGETALL returns array of [key1, value1, key2, value2... ].
+   if ( argv.length !==0 )
+       docs = mapRowsToObjects(argv, result)
+   else 
+       docs = parseKeyValueArrays(result)
+
+   return docs 
 }
 
 export async function zAddIncr(key, member) {
@@ -133,13 +136,16 @@ export async function fsDocumentsV1(documentPrefix, testField, containedValue, o
       arguments: tokens
    });
 
+   let docs = []
    // HMGET returns array of [value1, vaue2,...] , without field name.
    // HGETALL returns array of [key1, value1, key2, value2... ].
    if ( argv.length !==0 )
       // Filter out unwanted properties. 
-      return filterProperties(parseKeyValueArrays(result), argv)
+      docs = filterProperties(parseKeyValueArrays(result), argv)
    else 
-      return parseKeyValueArrays(result)
+      docs = parseKeyValueArrays(result)
+
+   return docs 
 }
 
 export async function fsDocumentsV2(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
@@ -187,13 +193,39 @@ export async function fsDocumentsV2(documentPrefix, testField, containedValue, o
 }
 
 /*
-
+   Update `visited`, `updatedAt` and `updateIdent`  field of documents 
 */
+export async function updateDocuments(docs) {
+   const promises = [];    // Collect promises 
+   docs.forEach(doc => { 
+         const docKey = getDocumentKeyName(doc.id)
+         const now = new Date(); 
+         const isoDate = now.toISOString(); 
+
+         // Use transaction to update document
+         promises.push( 
+                        redis.multi()
+                        .hIncrBy(docKey, 'visited', 1)
+                        .hSet(docKey, 'updatedAt', isoDate)
+                        .hIncrBy(docKey, 'updateIdent', 1)
+                        .exec()
+            )
+         // Do misc housekeeping 
+         promises.push(
+            zAddIncr( getVisitedKeyName(), docKey )
+         )
+        })
+   return await Promise.all(promises); // Resolve all at once
+}
+
 export async function getDocument(id) { 
   /* HGETALL fts:chinese:documents:31 */
    return await redis.hGetAll(getDocumentKeyName(id))
  }
 
+ /*
+    Miscellaneous 
+*/
  export async function getStatus() { 
     const { redisVersion, luaVersion } = await getRedisVersions()
     const [docCount, docSize ] = await countKeys(getDocumentKeyName(''))

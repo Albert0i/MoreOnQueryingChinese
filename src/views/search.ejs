@@ -13,7 +13,7 @@
     <input name="query" id="query" value="<%= query %>" placeholder="輸入搜尋詞…" class="w-full border rounded px-4 py-2" autofocus required  maxlength="512"/>
 
     <div class="flex items-center space-x-2">
-      <input type="checkbox" id="fulltextMode" name="fulltextMode" class="h-4 w-4 text-blue-500" <%= fulltextMode ? 'checked' : '' %> />
+      <input type="checkbox" id="fulltext" name="fulltext" class="h-4 w-4 text-blue-500" <%= fulltext ? 'checked' : '' %> />
       <label for="fullMode" class="text-black text-sm">全文模式</label>
     </div>
 
@@ -42,7 +42,7 @@
        Part II: Handle async call to backend API when query value change.
     */
     const query = document.getElementById('query');
-    const fulltextMode = document.getElementById('fulltextMode');
+    const fulltext = document.getElementById('fulltext');
     const hintDiv = document.getElementById('result-hint'); 
 
     let timeoutId;
@@ -56,15 +56,15 @@
           hintDiv.textContent = '';
           return;
         }
-        check(query, fulltextMode.checked)
+        check(query, fulltext.checked)
       }, 1000); // debounce delay
     });
 
     // Checkbox changed 
-    fulltextMode.addEventListener('change', () => {
+    fulltext.addEventListener('change', () => {
     const queryValue = query.value.trim();
     if (queryValue) {
-       check(query, fulltextMode.checked)
+       check(query, fulltext.checked)
       }
     });
 
