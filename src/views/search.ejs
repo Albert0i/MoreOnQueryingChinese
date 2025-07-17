@@ -13,7 +13,7 @@
     <input name="query" id="query" value="<%= query %>" placeholder="輸入搜尋詞…" class="w-full border rounded px-4 py-2" autofocus required  maxlength="512"/>
 
     <div class="flex items-center space-x-2">
-      <input type="checkbox" id="fullMode" name="fullMode" class="h-4 w-4 text-blue-500" <%= fullMode ? 'checked' : '' %> />
+      <input type="checkbox" id="fulltextMode" name="fulltextMode" class="h-4 w-4 text-blue-500" <%= fulltextMode ? 'checked' : '' %> />
       <label for="fullMode" class="text-black text-sm">全文模式</label>
     </div>
 
@@ -42,10 +42,12 @@
        Part II: Handle async call to backend API when query value change.
     */
     const query = document.getElementById('query');
-    const hintDiv = document.getElementById('result-hint');
-   
+    const fulltextMode = document.getElementById('fulltextMode');
+    const hintDiv = document.getElementById('result-hint'); 
+
     let timeoutId;
 
+    // Input box change 
     query.addEventListener('input', () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
@@ -53,13 +55,21 @@
         if (!queryValue) {
           hintDiv.textContent = '';
           return;
-        }                
-        checkFT(query)
+        }
+        check(query, fulltextMode.checked)
       }, 1000); // debounce delay
     });
 
-    async function checkFT(query) {
-      fetch(`/api/v1/check?query=${encodeURIComponent(query.value)}`)
+    // Checkbox changed 
+    fulltextMode.addEventListener('change', () => {
+    const queryValue = query.value.trim();
+    if (queryValue) {
+       check(query, fulltextMode.checked)
+      }
+    });
+
+    async function check(query, fulltext) {
+      fetch(`/api/v1/check?query=${encodeURIComponent(query.value)}&fulltext=${fulltext}`)
           .then(res => res.json())
           .then(data => {
             if (data.success) {

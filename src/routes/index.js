@@ -9,21 +9,21 @@ router.get('/', (req, res) => {
 
 // Search page - GET (initial form)
 router.get('/search', (req, res) => {
-  res.render('search', { query: '', results: [] });
+  res.render('search', { query: '', fulltextMode: '', results: [] });
 });
 
 // Search page - POST (handle query & render results)
 router.post('/search', async (req, res) => {
-  const { query } = req.body;
-
+  const { query, fulltextMode } = req.body;
+  
   const response = await fetch(`http://${process.env.HOST}:${process.env.PORT}/api/v1/search`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query })
+    body: JSON.stringify({ query, fulltextMode })
   });
   const results = await response.json();
 
-  res.render('search', { query, results });
+  res.render('search', { query, fulltextMode, results });
 });
 
 // Stats page

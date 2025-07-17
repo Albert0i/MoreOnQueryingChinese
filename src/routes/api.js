@@ -7,7 +7,9 @@ const router = express.Router();
 
 // POST /api/v1/search
 router.post('/search', async (req, res) => {  
-  const { query } = req.body;
+  const { query, fulltextMode } = req.body;
+  console.log('query =', query, ', fulltextMode =', fulltextMode)
+
   const results = await fsDocumentsV2(getTokenKeyName(''), "textChi", query, 0, process.env.MAX_FIND_RETURN, "id", "textChi", "score") 
   
   res.status(200).json(results)
@@ -15,7 +17,9 @@ router.post('/search', async (req, res) => {
 
 // GET /api/v1/check
 router.get('/check', async (req, res) => {  
-  const { query } = req.query
+  const { query, fulltext } = req.query
+  console.log('query =', query, ', fulltext =', fulltext)
+
   const results = await fsDocumentsV1(getTokenKeyName(''), "textChi", query, 0, 9999, "id") 
 
   res.status(200).json({ success: true, count: results.length })
