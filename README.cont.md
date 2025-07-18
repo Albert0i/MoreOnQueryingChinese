@@ -235,7 +235,7 @@ redis.call('EXPIRE', tempkey, tempkeyTTL)
 This optimization seems over-fastidious and unnecessary in small dataset. However, doing this extra steps may of great help to your in future project... 
 
 
-#### III. Crumbs from [DONGDICT](https://github.com/Albert0i/DONGDICT) and  [Vector Semantic Search in Chinese using MariaDB](https://github.com/Albert0i/mariadb-vss-chinese)
+#### III. Crumbs from [DONGDICT](https://github.com/Albert0i/DONGDICT) and [Vector Semantic Search in Chinese using MariaDB](https://github.com/Albert0i/mariadb-vss-chinese)
 Start the server: 
 ```
 npm run dev 
@@ -248,6 +248,8 @@ And navigate to [http://localhost:3000](http://localhost:3000):
 ![alt search](img/search.JPG)
 
 ![alt details](img/details.JPG)
+
+![alt stats](img/stats.JPG)
 
 Have fun! 
 
