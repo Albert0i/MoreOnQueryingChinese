@@ -110,7 +110,7 @@ In some sentences, "韓非子" is a token; while in others, "韓非" and "子曰
 
 
 #### III. Using Object Inspection 
-Our approach is simple and yet stupid: reading out all text fields and test they contain the word '韓非子'. 
+Our approach is simple and yet stupid: reading out all text fields and test if they contain the word '韓非子'. 
 
 `search1.js`
 ```
