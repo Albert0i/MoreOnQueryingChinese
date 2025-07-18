@@ -1,13 +1,13 @@
 ### More On Querying Chinese (cont.)
 
-> [不問蒼生問 AI。](https://fanti.dugushici.com/mingju/14821#google_vignette)
-> High tech hi 嘢, low tech 撈嘢。
+> [「不問蒼生問 AI」](https://fanti.dugushici.com/mingju/14821#google_vignette)之 hi tech揩嘢，low tech撈嘢。
+
 
 #### Prologue 
 
 
 #### I. And the missing score...?!
-To work out the score, we have to delve into greater details of Sorted Set. To find out which sentences contain the phrase "世界", we may use: 
+Previously, we've demonstrated how to implement Faceted Search on Chinese. To further work out the score, we have to delve into greater details of Sorted Set. To find out which sentences contain the phrase "世界", we may use: 
 
 ```
 > ZINTER 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界" AGGREGATE MIN WITHSCORES
@@ -22,7 +22,7 @@ To work out the score, we have to delve into greater details of Sorted Set. To f
 242) "3"
 ```
 
-When you use Redis’s [ZINTER](https://redis.io/docs/latest/commands/zinter/) command to intersect two or more **sorted sets**, the resulting scores depend on the **aggregation method** you choose. By default, Redis **adds the scores** of matching members across all sets.
+When we use Redis’s [ZINTER](https://redis.io/docs/latest/commands/zinter/) command to intersect two or more **sorted sets**, the resulting scores depend on the **aggregation method** you choose. By default, Redis **adds the scores** of matching members across all sets.
 
 **Aggregation Modes**
 
@@ -34,7 +34,7 @@ You can control how scores are combined using the `AGGREGATE` option:
 | `MIN` | Takes the lowest score | `min(2, 3) = 2` |
 | `MAX` | Takes the highest score | `max(2, 3) = 3` |
 
-Aforementioned `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggregation and also give back the score. As you can see, we found 121 matched sentences here. Then we have to sort by the score in descending order and return. To do that, we have to store the intermediate result using [ZINTERSTORE](ZINTERSTORE) in a temporary key, sort it using [ZREVRANGEBYSCORE](https://redis.io/docs/latest/commands/zrevrangebyscore/) like so: 
+ `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggregation and returns with score. As you can see, we found 121 matched sentences. Then we have to sort them by the score in descending order. To do that, we have to store the intermediate result using [ZINTERSTORE](ZINTERSTORE) somewhere, sort it using [ZREVRANGEBYSCORE](https://redis.io/docs/latest/commands/zrevrangebyscore/) like so: 
 
 ```
 > ZINTERSTORE "temp:世界" 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界" AGGREGATE MIN 
@@ -63,7 +63,7 @@ Aforementioned `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggr
 20) "1"
 ```
 
-To verify: 
+To verify the results: 
 
 ```
 HGET "fts:chinese:documents:59" textChi
@@ -83,7 +83,7 @@ HGET "fts:chinese:documents:991" textChi
 
 > 探索<b>世界</b>的美妙之處
 
-Sentence with highest score stays on top. The last thing to do is to remove the temporary key "temp:世界", which is done using a unique feature in Redis -- [TTL](https://redis.io/docs/latest/commands/ttl/) and [EXPIRE](https://redis.io/docs/latest/commands/expire/).
+Sentence with highest score should stay on top. The very last thing to do is to remove the temporary key "temp:世界", which is done using a unique feature in Redis -- [TTL](https://redis.io/docs/latest/commands/ttl/) and [EXPIRE](https://redis.io/docs/latest/commands/expire/).
 
 
 #### II. The final code and it's optimization
@@ -294,4 +294,4 @@ Have fun!
 #### Epilogue 
 
 
-### EOF (2025/07/18)
+### EOF (2025/07/25)
