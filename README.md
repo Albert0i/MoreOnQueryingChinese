@@ -187,10 +187,11 @@ export async function scanDocuments(documentPrefix, testField, containedValue, o
 ```
 const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非") 
 ```
-Or more sophisticated with: 
+Which returns all fields. Or more sophisticated with: 
 ```
 const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 ```
+Only returns fields selectively.  
 
 `scanTextChi.lua`
 ```
