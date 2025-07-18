@@ -281,6 +281,8 @@ Here are the 6 combinations:
 5. 子韓非  
 6. 子非韓
 
+---
+
 **Commonly Used Characters**
 - The **Chart of Common Characters of Modern Chinese** lists **3,500** essential characters for literacy.
 - Knowing **2,000–3,000** characters is enough to read most newspapers and books.
