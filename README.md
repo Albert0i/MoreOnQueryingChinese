@@ -233,7 +233,7 @@ until (cursor == "0")
 return matched
 ```
 
-The lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is *not* scalable! It's ok with hundred thousands of sentences but definitely not with ten billions, for example. There must be better ways I assure... 
+The lua script is virtually doing a **full table scan** in RDBMS terminology behind the scenes, and this works much better than before. The principal issue is that it is *not* scalable! It's ok with thousands of sentences but definitely not one billions, for example. There must be better ways I assure... 
 
 
 #### IV. Using Faceted Search 
@@ -245,7 +245,7 @@ When the tokenizer doesn't recognize the text, it simply adds a space after each
 
 The idea is simple: 
 1. To remove unnecessary punctuation symbol and stop words; 
-2. Split the sentence in tokens;
+2. Split the sentence in words, every word is a token;
 3. Add each token to Sorted Set; 
 4. Use join to find out the matched keys. 
 ```
