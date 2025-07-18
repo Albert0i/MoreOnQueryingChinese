@@ -191,7 +191,7 @@ Which returns all fields. Or more sophisticated with:
 ```
 const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 ```
-Only returns fields selectively.  
+Returns selected fields. 
 
 `scanTextChi.lua`
 ```
