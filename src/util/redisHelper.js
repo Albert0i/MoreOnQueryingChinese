@@ -167,27 +167,27 @@ export async function fsDocumentsV2(documentPrefix, testField, containedValue, o
    else {
       docs = convertNestedToObjectsWithScore(result)
    }
-   // Update `visited` field
-   const promises = [];    // Collect promises 
-   docs.forEach(doc => { 
-         const docKey = getDocumentKeyName(doc.id)
-         const now = new Date(); 
-         const isoDate = now.toISOString(); 
+   // // Update `visited` field
+   // const promises = [];    // Collect promises 
+   // docs.forEach(doc => { 
+   //       const docKey = getDocumentKeyName(doc.id)
+   //       const now = new Date(); 
+   //       const isoDate = now.toISOString(); 
 
-         // Use transaction to update document
-         promises.push( 
-                        redis.multi()
-                        .hIncrBy(docKey, 'visited', 1)
-                        .hSet(docKey, 'updatedAt', isoDate)
-                        .hIncrBy(docKey, 'updateIdent', 1)
-                        .exec()
-            )
-         // Do misc housekeeping 
-         promises.push(
-            zAddIncr( getVisitedKeyName(), docKey )
-         )
-        })
-   await Promise.all(promises); // Resolve all at once
+   //       // Use transaction to update document
+   //       promises.push( 
+   //                      redis.multi()
+   //                      .hIncrBy(docKey, 'visited', 1)
+   //                      .hSet(docKey, 'updatedAt', isoDate)
+   //                      .hIncrBy(docKey, 'updateIdent', 1)
+   //                      .exec()
+   //          )
+   //       // Do misc housekeeping 
+   //       promises.push(
+   //          zAddIncr( getVisitedKeyName(), docKey )
+   //       )
+   //      })
+   // await Promise.all(promises); // Resolve all at once
    
    return docs
 }
