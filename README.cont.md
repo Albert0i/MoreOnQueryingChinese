@@ -34,7 +34,7 @@ You can control how scores are combined using the `AGGREGATE` option:
 | `MIN` | Takes the lowest score | `min(2, 3) = 2` |
 | `MAX` | Takes the highest score | `max(2, 3) = 3` |
 
- `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggregation and returns with score. As you can see, we found 121 matched sentences. Then we have to sort them by the score in descending order. To do that, we have to store the intermediate result using [ZINTERSTORE](ZINTERSTORE) somewhere, sort it using [ZREVRANGEBYSCORE](https://redis.io/docs/latest/commands/zrevrangebyscore/) like so: 
+ `AGGREGATE MIN WITHSCORES` means to use the minimum score in aggregation and returns with score. As you can see, we found 121 matched sentences. Then we have to sort them by the score in descending order. To do that, we have to store the intermediate result somewhere using [ZINTERSTORE](ZINTERSTORE), sort it using [ZREVRANGEBYSCORE](https://redis.io/docs/latest/commands/zrevrangebyscore/) like so: 
 
 ```
 > ZINTERSTORE "temp:世界" 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界" AGGREGATE MIN 
