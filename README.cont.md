@@ -121,27 +121,6 @@ export async function fsDocuments(documentPrefix, testField, containedValue, off
    else {
       docs = convertNestedToObjectsWithScore(result)
    }
-   // Update `visited` field
-   const promises = [];    // Collect promises 
-   docs.forEach(doc => { 
-         const docKey = getDocumentKeyName(doc.id)
-         const now = new Date(); 
-         const isoDate = now.toISOString(); 
-
-         // Use transaction to update document
-         promises.push( 
-                        redis.multi()
-                        .hIncrBy(docKey, 'visited', 1)
-                        .hSet(docKey, 'updatedAt', isoDate)
-                        .hIncrBy(docKey, 'updateIdent', 1)
-                        .exec()
-            )
-         // Do misc housekeeping 
-         promises.push(
-            zAddIncr( getVisitedKeyName(), docKey )
-         )
-        })
-   await Promise.all(promises); // Resolve all at once
    
    return docs
 }
@@ -151,10 +130,11 @@ export async function fsDocuments(documentPrefix, testField, containedValue, off
 ```
 const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界") 
 ```
-Or more sophisticated with: 
+Which returns all fields. Or more sophisticated with: 
 ```
 const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界", 0, 10, "id", "textChi", "score") 
 ```
+Returns selected fields.
 
 `fsTextChi.lua`
 ```
@@ -252,13 +232,7 @@ redis.call('EXPIRE', tempkey, tempkeyTTL)
 - Redis’s `ZINTERSTORE` has worst-case complexity of `O(N × K)` where `N` is the cardinality of the smallest set.
 - Starting with the smallest set minimizes unnecessary comparisons and speeds up intersection.
 
-This optimization seems over-fastidious and thus unnecessary in our dataset. However, as data size grows in time to ten billions, for example. The average cardinality could be humungous. 
-
-```
-10,000,000,000 ÷ 8,000 = 1,250,000
-```
-
-Doing this extra steps may of great help to your application... 
+This optimization seems over-fastidious and unnecessary in small dataset dataset. However, doing this extra steps may of great help to your future project... 
 
 
 #### III. A Crumb from [Vector Semantic Search in Chinese using MariaDB](https://github.com/Albert0i/mariadb-vss-chinese)
