@@ -7,7 +7,7 @@
 
 
 #### I. And the missing score...?!
-Previously, we've demonstrated how to implement Faceted Search on Chinese. To further work out the score, we have to delve into greater details of Sorted Set. To find out which sentences contain the phrase "世界", we may use: 
+Previously, we've demonstrated how to implement Faceted Search on Chinese. To further work out the score, we have to delve into greater details in Sorted Set. For example, to find out which sentences contain the phrase "世界", we may use: 
 
 ```
 > ZINTER 2 "fts:chinese:tokens:世" "fts:chinese:tokens:界" AGGREGATE MIN WITHSCORES
