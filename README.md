@@ -423,10 +423,11 @@ export async function fsDocuments(documentPrefix, testField, containedValue, off
 ```
 const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非") 
 ```
-Or more sophisticated with: 
+Which returns all fields. Or more sophisticated with: 
 ```
 const result = await scanDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 ```
+Returns selected fields.
 
 `fsTextChi.lua`
 ```
