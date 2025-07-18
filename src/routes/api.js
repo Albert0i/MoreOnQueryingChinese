@@ -1,16 +1,23 @@
 import 'dotenv/config'
 import express from 'express';
 
-import { scanDocuments, fsDocumentsV2 as fsDocuments, getTokenKeyName, getDocument, getStatus } from '../util/redisHelper.js'
+import { scanDocuments, fsDocumentsV2 as fsDocuments, getDocumentKeyName, getTokenKeyName, getDocument, getStatus } from '../util/redisHelper.js'
 
 const router = express.Router();
 
 // POST /api/v1/search
 router.post('/search', async (req, res) => {  
   const { query, fulltext } = req.body;
-  console.log('search query =', query, ', fulltext =', fulltext)
+  console.log('query =', query, ', fulltext =', fulltext)
 
-  const results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, process.env.MAX_FIND_RETURN, "id", "textChi", "score") 
+  let results = []
+  if (toBoolean(fulltext)) {
+    console.log('Search using Faceted Search, query =', query, ', fulltext = ',fulltext)
+    results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, 9999, "id", "textChi", "score") 
+  } else {
+    console.log('Search using Document Scan, query =', query, ', fulltext = ',fulltext)
+    results = await scanDocuments(getDocumentKeyName(''), "key", query, 0, 9999, "id", "textChi", "score") 
+  }
   
   res.status(200).json(results)
 })
@@ -18,9 +25,15 @@ router.post('/search', async (req, res) => {
 // GET /api/v1/check
 router.get('/check', async (req, res) => {  
   const { query, fulltext } = req.query
-  console.log('check query =', query, ', fulltext =', fulltext)
 
-  const results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, 9999, "id") 
+  let results = []
+  if (toBoolean(fulltext)) {
+    console.log('Check using Faceted Search, query =', query, ', fulltext = ',fulltext)
+    results = await fsDocuments(getTokenKeyName(''), "textChi", query, 0, 9999, "id") 
+  } else {
+    console.log('Check using Document Scan, query =', query, ', fulltext = ',fulltext)
+    results = await scanDocuments(getDocumentKeyName(''), "key", query, 0, 9999, "id") 
+  }
 
   res.status(200).json({ success: true, count: results.length })
 })
@@ -36,5 +49,10 @@ router.get('/details', async (req, res) => {
 
   res.status(200).json(await getDocument(id))
 });
+
+function toBoolean(value) {
+  return String(value).toLowerCase().trim() === 'true' || 
+         String(value).toLowerCase().trim() === 'on';
+}
 
 export default router;

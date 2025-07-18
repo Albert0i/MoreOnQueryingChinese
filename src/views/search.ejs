@@ -29,8 +29,13 @@
             💬 <%- item.textChi.length > 160 ? item.textChi.slice(0, 160) + '...' : item.textChi %>
           </p>
           <p class="text-sm text-gray-500">
-            🆔 <a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a> |
-            分數: <%= item.score.toFixed(0) %>
+            🆔 <a href="/details/<%= item.id %>" class="text-blue-500 hover:underline"><%= item.id %></a> |            
+            分數: 
+              <% if (item.score) { %>
+                <%= item.score.toFixed(0) %>
+              <% } else { %>
+                ---
+              <% } %>
           </p>
         </div>
       <% }); %>
