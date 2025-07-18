@@ -374,7 +374,7 @@ ZREVRANGEBYSCORE fts:chinese:wc +inf -inf WITHSCORES LIMIT 0 10
 ![alt wc](img/wc.JPG)
 
 
-To disregard the duplicated occurrences of a token in sentences, use [ZCARD](https://redis.io/docs/latest/commands/zcard/) instead: 
+To disregard the repeated occurrences of a token in a sentence, use [ZCARD](https://redis.io/docs/latest/commands/zcard/) instead: 
 ```
         promises.push(redis.zAdd(
                     'fts:chinese:wc', { 
@@ -384,7 +384,7 @@ To disregard the duplicated occurrences of a token in sentences, use [ZCARD](htt
                 ))
 ```
 
-As you can see, with a little bit effort and patience, you can do much more with Redis... The only boundary is your imagination! 
+As you can see, with a little bit effort and patience, one can do much more with Redis... The only boundary is your imagination! 
 
 
 #### VI. Querying the database 
@@ -472,7 +472,7 @@ return matched
 
 The protagonist here in lua script is [ZINTER](https://redis.io/docs/latest/commands/zinter/) which is used to calculate sentences containing tokens to be searched for. It virtually does a index search in RDBMS terminology behind the scenes, then a subsequent scan is done to get rid of false-positive. 
 
-For sake of simplicity, this script returns everything in a `HASH` with `HGETALL`, and thus further use of `filterProperties` is required to wipe off unnecessary things. 
+For sake of simplicity, this script returns everything in a `HASH` with `HGETALL`, and thus further use of `filterProperties` is required to remove unnecessary fields. 
 
 For the best performance, [ZINTER](https://redis.io/docs/latest/commands/zinter/) should be started from the lowest to highest cardinality. 
 
@@ -486,7 +486,7 @@ Along the way, we have implemented a moderate complexity, decent performance and
 3. Tolerance in speed 
 4. Effort to put 
 
-To conclude our journey, the following table is number of sentences versus tokens in our example: 
+To conclude our journey, the following table is number of sentences versus tokens in `documents.js`: 
 
 | Sentences | Tokens |
 | -------- | -------- |
@@ -494,7 +494,7 @@ To conclude our journey, the following table is number of sentences versus token
 | 1710 | 1929 |
 | 1713 | 1998 |
 
-And search power between MariaDB and Redis at a glance: 
+And search functionality between MariaDB and Redis at a glance: 
 
 | Type of search | MariaDB | Redis |
 | -------- | -------- | -------- |
@@ -505,8 +505,13 @@ And search power between MariaDB and Redis at a glance:
 
 [Continue to read...](README.cont.md)
 
+
 #### VIII. Bibliography
 1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
+2. [Scripting with Lua](https://redis.io/docs/latest/develop/programmability/eval-intro/)
+3. [Redis Lua API reference](https://redis.io/docs/latest/develop/programmability/lua-api/)
+4. [Redis functions](https://redis.io/docs/latest/develop/programmability/functions-intro/)
+5. [The Castle by Franz Kafka](https://files.libcom.org/files/Franz%20Kafka-The%20Castle%20(Oxford%20World's%20Classics)%20(2009).pdf)
 
 
 #### Epilogue 
