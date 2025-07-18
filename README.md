@@ -15,7 +15,7 @@
 
 
 #### I. A taxonomy (TL;DR)
-According to my unofficial and incomplete understanding, Chinese is *roughly* divided into three classes: 
+According to unofficial and incomplete understanding, Chinese is *roughly* divided into three classes: 
 
 1. Ancient Chinese - 古文 or 文言文. Language used in major works written thousands of years ago. For example in [左傳‧宣公二年](https://ctext.org/chun-qiu-zuo-zhuan/xuan-gong/zh): 
 > 晉靈公不君，厚斂以彫牆，從臺上彈人，而觀其辟丸也，宰夫胹熊蹯不熟，殺之，寘諸畚，使婦人載以過朝，趙盾，士季，見其手，問其故，而患之，將諫，士季曰，諫而不入，則莫之繼也，會請先，不入，則子繼之，三進及溜，而後視之，曰，吾知所過矣，將改之。稽首而對曰，人誰無過，過而能改，善莫大焉。《詩》曰：『靡不有初，鮮克有終』，夫如是，則能補過者鮮矣。君能有終，則社稷之固也，豈惟群臣賴之，又曰，袞職有闕，惟仲山甫補之，能補過也。君能補過，袞不廢矣。猶不改，宣子驟諫，公患之，使鉏麑賊之，晨往，寢門闢矣，盛服將朝，尚早，坐而假寐，麑退，歎而言曰，不忘恭敬，民之主也，賊民之主，不忠，棄君之命，不信，有一於此，不如死也，觸槐而死。
@@ -38,7 +38,7 @@ Due to high structural complexity and intrinsic ambiguity of Chinese, sentences 
 
 -「下雨天，留客天，天留我不留。」
 
-As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/arts-edu/resources/mus-curri/com_masterwork3.pdf), ambiguity *only* appears when it is enunciated and properly delimited. 
+As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/arts-edu/resources/mus-curri/com_masterwork3.pdf), ambiguity *only* aroused when it is enunciated and properly delimited. 
 
 -「新君雖痛改前非，懷念手足憐弟寂寞，要歸藩承命排紛解難，保平安。」
 
@@ -46,7 +46,7 @@ As a more involved example in [粵劇名作欣賞-《洛神》研討會節錄](h
 
 「前」and「全」;「寂」and 「植」;「寞」and「莫」are the same or extremely similar in pronunciation but have different meaning. 
 
-Chinese sentence has no space or whatsoever in between, **tokenization** is NOT crucial but fatal in working out the semantic. All chinese tokenizer works with a dictionary of some kind. This will greatly influence the accuracy of Fulltext Search as well as Vector Semantic Search. As you may know tokenization is the first step in  vectorization. 
+Chinese sentence has no space or whatsoever in between, **tokenization** is NOT crucial but fatal in working out the semantic. All Chinese tokenizer works with a dictionary of some kind. This will greatly influence the accuracy of Fulltext Search as well as Vector Semantic Search. As you may know tokenization is the first step in  vectorization. 
 
 Redis supports Fulltext Search in Chinese out of the box but may not yield a satisfied outcome. For example in: 
 ```
@@ -506,7 +506,7 @@ And search power between MariaDB and Redis at a glance:
 
 
 #### Epilogue 
-Looking at the Chinese... it's so devastated, rotten, deteriorated, degenerated, eroded, ruined, broken, castrated, smashed, battered, impaired and depraved today, being a Chinese is more a curse than blessing. For sure Chinese was a poetic and lyrical language, people use it every day but rarely learn it anymore... 
+Looking at the Chinese today... it's so devastated, rotten, deteriorated, degenerated, eroded, ruined, broken, castrated, smashed, battered, impaired and depraved... being a Chinese is more a curse than blessing. For sure Chinese was a poetic and lyrical language, people use it every day but rarely learn it anymore... 
 
 ```
 雨後的清晨吹起暖風，
