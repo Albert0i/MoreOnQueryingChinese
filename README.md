@@ -153,7 +153,7 @@ console.log(result.length)
 
 ![alt search1](img/search1.JPG)
 
-And that will do, the only problem is slow! A more elaborated implementation is pretty much doing the same thing but on server side via lua script. 
+And that will do, the only problem is *slow*! A more elaborated implementation is pretty much doing the same thing but on server side via lua script. 
 
 `search2.js`
 ```
