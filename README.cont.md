@@ -2,6 +2,8 @@
 
 > [「不問蒼生問 AI」](https://fanti.dugushici.com/mingju/14821#google_vignette)之 [「hi tech揩嘢，low tech撈嘢」](https://www.bastillepost.com/hongkong/article/7101116-%E5%AD%AB%E6%AD%A3%E7%BE%A9%E7%A4%BA%E7%AF%84%EF%B8%B0hi-tech%E6%8F%A9%E5%98%A2%EF%BC%8Clow-tech%E6%92%88%E5%98%A2)
 
+![alt structured-unstructured-data](img/structured-unstructured-data.JPG)
+
 
 #### Prologue 
 
@@ -257,6 +259,8 @@ Have fun!
 #### IV. Retrospection 
 - Functions `spaceChineseChars`, `mapRowsToObjects`, `parseKeyValueArrays`, `filterProperties` and `convertNestedToObjectsWithScore`  are written by HIM to twist the output; 
 - Most lua scripts are also written by HIM. 
+
+![alt structured-unstructured-data-2](img/structured-unstructured-data-2.JPG)
 
 
 #### V. Bibliography
