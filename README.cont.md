@@ -260,7 +260,7 @@ Have fun!
 
 
 #### V. Bibliography
-1. [Modern Redis Crash Course: Backend with Express, TypeScript and Zod](https://youtu.be/dQV0xzOeGzU)
+1. [When to use vector search (and when NOT to)](https://youtu.be/Ryme6rUbhX8)
 2. [Scripting with Lua](https://redis.io/docs/latest/develop/programmability/eval-intro/)
 3. [Redis Lua API reference](https://redis.io/docs/latest/develop/programmability/lua-api/)
 4. [Redis functions](https://redis.io/docs/latest/develop/programmability/functions-intro/)

@@ -246,8 +246,9 @@ When the tokenizer doesn't recognize the text, it simply adds a space after each
 The idea is simple: 
 1. To remove unnecessary punctuation symbol and stop words; 
 2. Split the sentence in words, every word is a token;
-3. Add each token to Sorted Set; 
-4. Use join to find out the matched keys. 
+3. Add the key of containing document to the Sorted Set of contained tokens; 
+4. Use [ZINTER](https://redis.io/docs/latest/commands/zinter/) to join and find out the matched document keys. 
+
 ```
 ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:465"
 ZADD "fts:chinese:tokens:韓" 1 "fts:chinese:documents:470"
