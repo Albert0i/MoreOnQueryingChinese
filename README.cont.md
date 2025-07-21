@@ -240,6 +240,8 @@ This optimization seems over-fastidious and unnecessary in small dataset. Howeve
 #### III. Crumbs from [DONGDICT](https://github.com/Albert0i/DONGDICT) and [Vector Semantic Search in Chinese using MariaDB](https://github.com/Albert0i/mariadb-vss-chinese)
 Start the server: 
 ```
+node src/dongSeedRedis.js
+node src/wc.js
 npm run dev 
 ```
 
