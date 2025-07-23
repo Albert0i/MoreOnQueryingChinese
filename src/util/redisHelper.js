@@ -73,7 +73,7 @@ export async function loadScript() {
    Search by scanning documents 
 */
 export async function scanDocuments(documentPrefix, testField, containedValue, offset=0, limit = 10, ...argv) {
-    const result = await redis.evalSha(shaS1, {
+    const result = await redis.evalShaRo(shaS1, {
             keys: [ `${documentPrefix}*`, testField, containedValue, offset.toString(), limit.toString() ], 
             arguments: ( argv.length !== 0 ? argv : ["*"] )
         });
@@ -97,21 +97,21 @@ export async function zAddIncr(key, member) {
 }
 
 export async function zSumScore(key) {
-   return redis.evalSha(shaS3, {
+   return redis.evalShaRo(shaS3, {
       keys: [ key ],
       arguments: [ ]
     });
 }
 
 export async function countKeys(keyPrefix) {
-   return redis.evalSha(shaS5, {
+   return redis.evalShaRo(shaS5, {
       keys: [ `${keyPrefix}*` ],
       arguments: [ ]
     });    
 }
 
 export async function getVisitedDocuments(zKey, offset = 0, limit = 10, ...argv) {
-   const result = await redis.evalSha(shaS6, {
+   const result = await redis.evalShaRo(shaS6, {
       keys: [ zKey, offset.toString(), limit.toString()],
       arguments: ( argv.length !== 0 ? argv : ["*"] )
     });
