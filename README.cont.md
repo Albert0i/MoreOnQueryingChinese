@@ -94,10 +94,15 @@ Sentence with highest score should stay on top. The very last thing to do is to 
 /*
    main 
 */
+await redis.connect();
+await loadScript();
 const result = await fsDocuments("fts:chinese:tokens:", "textChi", "世界", 0, 10, "id", "textChi", "score") 
 
 console.log(result)
 console.log(result.length)
+
+await redis.close()
+process.exit()
 ```
 
 ![alt search4](img/search4.JPG)
