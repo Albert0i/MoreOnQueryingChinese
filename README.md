@@ -145,10 +145,14 @@ export async function scanTextChi(pattern) {
 /*
    main
 */
+await redis.connect();
 const result = await scanTextChi('韓非子')
 
 console.log(result)
 console.log(result.length)
+
+await redis.close()
+process.exit()
 ```
 
 ![alt search1](img/search1.JPG)
@@ -160,10 +164,15 @@ And that will do, the only problem is *slow*! A more elaborated implementation i
 /*
    main 
 */
+await redis.connect();
+await loadScript();
 const result = await scanDocuments("fts:chinese:documents:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 
 console.log(result)
 console.log(result.length)
+
+await redis.close()
+process.exit()
 ```
 
 ![alt search2](img/search2.JPG)
@@ -396,10 +405,15 @@ Now, time to query the data:
 /*
    main 
 */
+await redis.connect();
+await loadScript();
 const result = await fsDocuments("fts:chinese:tokens:", "textChi", "韓非子", 0, 10, "id", "textChi") 
 
 console.log(result)
 console.log(result.length)
+
+await redis.close()
+process.exit()
 ```
 
 ![alt search3](img/search3.JPG)
